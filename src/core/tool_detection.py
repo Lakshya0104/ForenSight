@@ -1,106 +1,86 @@
 import os
-import re
+from src.core.tool_db import load_tool_db
 
-OFFENSIVE_TOOLS = {
-    # Recon
-    "nmap":           {"category": "recon",          "paths": ["/usr/bin/nmap", "/usr/local/bin/nmap"], "risk": "HIGH"},
-    "masscan":        {"category": "recon",          "paths": ["/usr/bin/masscan"],                     "risk": "HIGH"},
-    "netdiscover":    {"category": "recon",          "paths": ["/usr/bin/netdiscover"],                 "risk": "MEDIUM"},
-    "recon-ng":       {"category": "recon",          "paths": ["/usr/bin/recon-ng"],                    "risk": "HIGH"},
-    "maltego":        {"category": "recon",          "paths": ["/usr/bin/maltego"],                     "risk": "HIGH"},
-    "theharvester":   {"category": "recon",          "paths": ["/usr/bin/theharvester"],                "risk": "HIGH"},
-    # Exploitation
-    "metasploit":     {"category": "exploit",        "paths": ["/opt/metasploit-framework", "/usr/bin/msfconsole"], "risk": "CRITICAL"},
-    "sqlmap":         {"category": "exploit",        "paths": ["/usr/bin/sqlmap"],                      "risk": "CRITICAL"},
-    "beef-xss":       {"category": "exploit",        "paths": ["/usr/bin/beef-xss", "/usr/share/beef-xss"], "risk": "CRITICAL"},
-    "exploit-db":     {"category": "exploit",        "paths": ["/usr/bin/searchsploit"],                "risk": "HIGH"},
-    "commix":         {"category": "exploit",        "paths": ["/usr/bin/commix"],                      "risk": "HIGH"},
-    # Password attacks
-    "hydra":          {"category": "brute_force",    "paths": ["/usr/bin/hydra"],                       "risk": "CRITICAL"},
-    "john":           {"category": "brute_force",    "paths": ["/usr/bin/john"],                        "risk": "HIGH"},
-    "hashcat":        {"category": "brute_force",    "paths": ["/usr/bin/hashcat"],                     "risk": "HIGH"},
-    "medusa":         {"category": "brute_force",    "paths": ["/usr/bin/medusa"],                      "risk": "HIGH"},
-    "crunch":         {"category": "brute_force",    "paths": ["/usr/bin/crunch"],                      "risk": "MEDIUM"},
-    # Sniffing
-    "wireshark":      {"category": "sniffing",       "paths": ["/usr/bin/wireshark", "/usr/bin/tshark"], "risk": "HIGH"},
-    "tcpdump":        {"category": "sniffing",       "paths": ["/usr/bin/tcpdump"],                     "risk": "MEDIUM"},
-    "ettercap":       {"category": "sniffing",       "paths": ["/usr/bin/ettercap"],                    "risk": "HIGH"},
-    "dsniff":         {"category": "sniffing",       "paths": ["/usr/bin/dsniff"],                      "risk": "HIGH"},
-    # Wireless
-    "aircrack-ng":    {"category": "wireless",       "paths": ["/usr/bin/aircrack-ng"],                 "risk": "HIGH"},
-    "kismet":         {"category": "wireless",       "paths": ["/usr/bin/kismet"],                      "risk": "HIGH"},
-    "wifite":         {"category": "wireless",       "paths": ["/usr/bin/wifite"],                      "risk": "HIGH"},
-    # Web
-    "burpsuite":      {"category": "web_exploit",    "paths": ["/usr/bin/burpsuite", "/opt/BurpSuiteCommunity"], "risk": "CRITICAL"},
-    "nikto":          {"category": "web_exploit",    "paths": ["/usr/bin/nikto"],                       "risk": "HIGH"},
-    "dirb":           {"category": "web_exploit",    "paths": ["/usr/bin/dirb"],                        "risk": "MEDIUM"},
-    "gobuster":       {"category": "web_exploit",    "paths": ["/usr/bin/gobuster"],                    "risk": "HIGH"},
-    "wfuzz":          {"category": "web_exploit",    "paths": ["/usr/bin/wfuzz"],                       "risk": "HIGH"},
-    # Anti-forensic
-    "bleachbit":      {"category": "anti_forensic",  "paths": ["/usr/bin/bleachbit"],                   "risk": "CRITICAL"},
-    "secure-delete":  {"category": "anti_forensic",  "paths": ["/usr/bin/srm", "/usr/bin/sfill"],       "risk": "CRITICAL"},
-    "shred":          {"category": "anti_forensic",  "paths": ["/usr/bin/shred"],                       "risk": "HIGH"},
-    "wipe":           {"category": "anti_forensic",  "paths": ["/usr/bin/wipe"],                        "risk": "HIGH"},
-    "timestomp":      {"category": "anti_forensic",  "paths": ["/usr/bin/timestomp"],                   "risk": "CRITICAL"},
-    # Anonymization
-    "tor":            {"category": "anonymization",  "paths": ["/usr/bin/tor", "/usr/sbin/tor"],        "risk": "HIGH"},
-    "proxychains":    {"category": "anonymization",  "paths": ["/usr/bin/proxychains", "/usr/bin/proxychains4"], "risk": "HIGH"},
-    "anonsurf":       {"category": "anonymization",  "paths": ["/usr/bin/anonsurf"],                    "risk": "HIGH"},
-    # C2 / Backdoors
-    "netcat":         {"category": "c2",             "paths": ["/usr/bin/nc", "/usr/bin/netcat", "/bin/nc"], "risk": "HIGH"},
-    "socat":          {"category": "c2",             "paths": ["/usr/bin/socat"],                       "risk": "HIGH"},
-    "chisel":         {"category": "c2",             "paths": ["/usr/bin/chisel", "/opt/chisel"],       "risk": "CRITICAL"},
-    # Forensics (attacker using forensic tools against the victim)
-    "volatility":     {"category": "memory_forensic","paths": ["/usr/bin/volatility", "/usr/bin/vol"],  "risk": "HIGH"},
-    "foremost":       {"category": "data_recovery",  "paths": ["/usr/bin/foremost"],                    "risk": "MEDIUM"},
-    "binwalk":        {"category": "reversing",      "paths": ["/usr/bin/binwalk"],                     "risk": "MEDIUM"},
-}
+COMMON_BIN_PATHS = [
+    "/usr/bin", "/usr/local/bin", "/usr/sbin",
+    "/usr/local/sbin", "/bin", "/sbin",
+    "/opt", "/usr/share",
+]
+
 
 def detect_tools(target: str) -> list:
-    root = target.rstrip("/") if target != "/" else ""
+    root     = target.rstrip("/") if target != "/" else ""
+    tool_db  = load_tool_db()
     detected = []
-    checked = set()
+    checked  = set()
 
-    for tool_name, info in OFFENSIVE_TOOLS.items():
+    for tool_name, info in tool_db.items():
+        if tool_name in checked:
+            continue
+        checked.add(tool_name)
+
+        # Layer 1 — Binary path check
         found = False
-        for tool_path in info["paths"]:
-            full_path = os.path.join(root, tool_path.lstrip("/")) if root else tool_path
-            if os.path.exists(full_path):
-                size = 0
+        for bin_dir in COMMON_BIN_PATHS:
+            full = os.path.join(root, bin_dir.lstrip("/"), tool_name) if root \
+                   else os.path.join(bin_dir, tool_name)
+            if os.path.exists(full):
                 try:
-                    size = os.path.getsize(full_path)
+                    size = os.path.getsize(full)
                 except Exception:
-                    pass
+                    size = 0
                 detected.append({
-                    "name": tool_name,
-                    "category": info["category"],
-                    "risk": info["risk"],
-                    "state": "installed",
-                    "path": tool_path,
+                    "name":     tool_name,
+                    "category": info.get("category", "unknown"),
+                    "risk":     info.get("risk", "MEDIUM"),
+                    "state":    "installed",
+                    "path":     os.path.join(bin_dir, tool_name),
                     "size_bytes": size,
-                    "evidence": f"Binary confirmed at {tool_path} ({size} bytes)"
+                    "evidence": f"Binary confirmed at {bin_dir}/{tool_name} ({size} bytes)"
                 })
                 found = True
                 break
 
-        if not found and tool_name not in checked:
+        # Also check /opt/<toolname> and /usr/share/<toolname>
+        if not found:
+            for base in ["/opt", "/usr/share"]:
+                full = os.path.join(root, base.lstrip("/"), tool_name) if root \
+                       else os.path.join(base, tool_name)
+                if os.path.exists(full):
+                    detected.append({
+                        "name":     tool_name,
+                        "category": info.get("category", "unknown"),
+                        "risk":     info.get("risk", "MEDIUM"),
+                        "state":    "installed",
+                        "path":     f"{base}/{tool_name}",
+                        "size_bytes": 0,
+                        "evidence": f"Directory/binary found at {base}/{tool_name}"
+                    })
+                    found = True
+                    break
+
+        # Layer 2 — Ghost traces if not found as installed
+        if not found:
             ghost = _check_ghost_traces(root, tool_name)
             if ghost:
                 detected.append({
-                    "name": tool_name,
-                    "category": info["category"],
-                    "risk": info["risk"],
-                    "state": "removed",
-                    "path": "unknown (deleted)",
+                    "name":     tool_name,
+                    "category": info.get("category", "unknown"),
+                    "risk":     info.get("risk", "MEDIUM"),
+                    "state":    "removed",
+                    "path":     "unknown (deleted)",
                     "size_bytes": 0,
                     "evidence": ghost
                 })
-            checked.add(tool_name)
 
+    # Sort: CRITICAL installed first, then HIGH, then ghost traces
+    risk_order  = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
+    state_order = {"installed": 0, "removed": 1}
     detected.sort(key=lambda x: (
-        {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}.get(x["risk"], 4),
-        x["state"] == "removed"
+        risk_order.get(x.get("risk", "LOW"), 3),
+        state_order.get(x.get("state", "removed"), 1)
     ))
+
     return detected
 
 
@@ -114,32 +94,34 @@ def _check_ghost_traces(root: str, tool_name: str) -> str:
             content = open(dpkg_log, errors="ignore").read()
             if tool_name in content:
                 lines = [l for l in content.splitlines() if tool_name in l]
-                traces.append(f"dpkg.log: {lines[-1].strip()}")
+                if lines:
+                    traces.append(f"dpkg.log: {lines[-1].strip()[:80]}")
         except Exception:
             pass
 
     # APT history
-    apt_history = os.path.join(root, "var/log/apt/history.log") if root else "/var/log/apt/history.log"
-    if os.path.exists(apt_history):
+    apt_hist = os.path.join(root, "var/log/apt/history.log") if root else "/var/log/apt/history.log"
+    if os.path.exists(apt_hist):
         try:
-            content = open(apt_history, errors="ignore").read()
+            content = open(apt_hist, errors="ignore").read()
             if tool_name in content:
                 traces.append(f"APT history references {tool_name}")
         except Exception:
             pass
 
-    # DPKG info file list
-    dpkg_info = os.path.join(root, f"var/lib/dpkg/info/{tool_name}.list") if root else f"/var/lib/dpkg/info/{tool_name}.list"
+    # DPKG info list
+    dpkg_info = os.path.join(root, f"var/lib/dpkg/info/{tool_name}.list") if root \
+                else f"/var/lib/dpkg/info/{tool_name}.list"
     if os.path.exists(dpkg_info):
         traces.append(f"DPKG info file exists: /var/lib/dpkg/info/{tool_name}.list")
 
     # Bash history
-    bash_history = os.path.join(root, "root/.bash_history") if root else "/root/.bash_history"
-    if os.path.exists(bash_history):
+    bash_hist = os.path.join(root, "root/.bash_history") if root else "/root/.bash_history"
+    if os.path.exists(bash_hist):
         try:
-            content = open(bash_history, errors="ignore").read()
+            content = open(bash_hist, errors="ignore").read()
             if tool_name in content:
-                traces.append(f"Found in bash history")
+                traces.append(f"Referenced in bash history")
         except Exception:
             pass
 

@@ -1,0 +1,233 @@
+{
+  "updated": "2026-03-16T20:27:58.604233+00:00",
+  "tool_count": 45,
+  "categories_hit": 0,
+  "source": "static-fallback",
+  "tools": {
+    "nmap": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "masscan": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "metasploit-framework": {
+      "category": "exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "msfconsole": {
+      "category": "exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "sqlmap": {
+      "category": "web",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "hydra": {
+      "category": "passwords",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "john": {
+      "category": "passwords",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "hashcat": {
+      "category": "passwords",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "aircrack-ng": {
+      "category": "wireless",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "wireshark": {
+      "category": "sniffing-spoofing",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "burpsuite": {
+      "category": "web",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "nikto": {
+      "category": "web",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "gobuster": {
+      "category": "web",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "wfuzz": {
+      "category": "web",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "dirb": {
+      "category": "web",
+      "risk": "MEDIUM",
+      "source": "static-fallback"
+    },
+    "netcat": {
+      "category": "post-exploitation",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "socat": {
+      "category": "post-exploitation",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "chisel": {
+      "category": "post-exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "bleachbit": {
+      "category": "anti_forensic",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "shred": {
+      "category": "anti_forensic",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "tor": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "proxychains": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "wifite": {
+      "category": "wireless",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "kismet": {
+      "category": "wireless",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "ettercap": {
+      "category": "sniffing-spoofing",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "tcpdump": {
+      "category": "sniffing-spoofing",
+      "risk": "MEDIUM",
+      "source": "static-fallback"
+    },
+    "medusa": {
+      "category": "passwords",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "volatility": {
+      "category": "forensics",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "autopsy": {
+      "category": "forensics",
+      "risk": "MEDIUM",
+      "source": "static-fallback"
+    },
+    "binwalk": {
+      "category": "reverse-engineering",
+      "risk": "MEDIUM",
+      "source": "static-fallback"
+    },
+    "ghidra": {
+      "category": "reverse-engineering",
+      "risk": "MEDIUM",
+      "source": "static-fallback"
+    },
+    "radare2": {
+      "category": "reverse-engineering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "maltego": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "recon-ng": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "theharvester": {
+      "category": "information-gathering",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "commix": {
+      "category": "web",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "beef-xss": {
+      "category": "exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "searchsploit": {
+      "category": "exploitation",
+      "risk": "HIGH",
+      "source": "static-fallback"
+    },
+    "setoolkit": {
+      "category": "social-engineering",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "responder": {
+      "category": "sniffing-spoofing",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "impacket": {
+      "category": "post-exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "crackmapexec": {
+      "category": "post-exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "evil-winrm": {
+      "category": "post-exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "bloodhound": {
+      "category": "post-exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    },
+    "powersploit": {
+      "category": "post-exploitation",
+      "risk": "CRITICAL",
+      "source": "static-fallback"
+    }
+  }
+}

@@ -13,6 +13,7 @@ from rich.align import Align
 from rich.padding import Padding
 from rich import box
 
+from src.core.tool_db import refresh_tool_db, get_db_meta
 from src.core.os_fingerprint import fingerprint_os
 from src.core.tool_detection import detect_tools
 from src.core.log_analyzer import analyze_logs
@@ -46,13 +47,22 @@ RISK_COLORS = {
 
 def print_banner():
     console.print(f"[bold green]{BANNER}[/bold green]")
+    db_meta = get_db_meta()
+    db_status = (
+        f"[green]{db_meta['tool_count']} tools[/green]  "
+        f"[dim]·  updated {db_meta['updated'][:10]}  "
+        f"·  source: {db_meta['source']}[/dim]"
+        if db_meta["exists"] else
+        f"[yellow]static fallback ({db_meta['tool_count']} tools) — run --update-db[/yellow]"
+    )
     console.print(Panel.fit(
         Align.center(
             "[bold bright_white]Linux Forensic Intelligence System[/bold bright_white]\n"
             "[dim green]Offensive OS Detection  ·  Anti-Forensic Analysis  ·  MITRE ATT&CK Mapping[/dim green]\n"
             "[dim green]Temporal Paradox Engine  ·  UEFI Fingerprinting  ·  Attacker Persona Profiling[/dim green]\n\n"
             f"[dim]v{VERSION}  ·  Team Cyber Nuggets  ·  "
-            f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC[/dim]"
+            f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC[/dim]\n"
+            f"[dim]Tool DB: [/dim]{db_status}"
         ),
         border_style="green",
         padding=(0, 4)
@@ -598,17 +608,28 @@ def print_results(result: dict, elapsed: float, verbose: bool = False):
 
 
 def run_scan(target: str, output_path: str = "forensight_report.json",
-             demo: bool = False, verbose: bool = False):
+             demo: bool = False, verbose: bool = False, update_db: bool = False):
     print_banner()
     start = time.time()
 
-    if demo:
+    if update_db:
         console.print(Panel(
-            "[bold yellow]DEMO MODE[/bold yellow] — Running with simulated Tails OS attack scenario\n"
-            "[dim]All findings are representative of a real offensive Linux investigation.[/dim]",
-            border_style="yellow", padding=(0, 2)
-        ))
-        console.print()
+        "[bold green]Refreshing tool database from Kali apt repos...[/bold green]\n"
+        "[dim]Querying 21 Kali meta-packages. This takes ~30 seconds.[/dim]",
+        border_style="green", padding=(0, 2)
+    ))
+    from src.core.tool_db import refresh_tool_db
+    with console.status("[green]Pulling from apt-cache...[/green]"):
+        db = refresh_tool_db(verbose=False)
+    console.print(Panel(
+        f"[bold green]✓ Tool DB updated[/bold green]\n"
+        f"[dim]  Tools loaded:   [/dim][bold]{db['tool_count']}[/bold]\n"
+        f"[dim]  Categories hit: [/dim][bold]{db['categories_hit']}[/bold]\n"
+        f"[dim]  Source:         [/dim][bold]{db['source']}[/bold]\n"
+        f"[dim]  Saved to:       [/dim][bold]tool_db.json[/bold]",
+        border_style="green", padding=(0, 2)
+    ))
+    console.print()
 
     result = {
         "scan_meta": {
@@ -755,6 +776,9 @@ if __name__ == "__main__":
     parser.add_argument("target",    help="Target path (/ for live system, or mounted disk image path)")
     parser.add_argument("--output",  default="forensight_report.json", help="Output JSON report path")
     parser.add_argument("--demo",    action="store_true", help="Run demo with simulated Tails scenario")
+    
     parser.add_argument("--verbose", action="store_true", help="Show full paradox table and extended output")
+    parser.add_argument("--update-db", action="store_true",
+                    help="Refresh tool database from Kali apt repos (~30s, run once)")
     args = parser.parse_args()
-    run_scan(args.target, args.output, args.demo, args.verbose)
+run_scan(args.target, args.output, args.demo, args.verbose, args.update_db)
