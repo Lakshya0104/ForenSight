@@ -2,7 +2,7 @@
   "scan_meta": {
     "tool": "ForenSight",
     "version": "1.0.0",
-    "scan_time": "2026-03-16T07:51:21.383894Z",
+    "scan_time": "2026-03-16T15:10:48.930770+00:00",
     "target": "C:\\Cybershield\\mock_target",
     "mode": "live"
   },
@@ -103,6 +103,8 @@
     "uefi_boot_anomaly": 0,
     "offensive_os": 0
   },
-  "narrative": "11 critical log file(s) were missing or wiped, including authentication logs and system activity records. This represents deliberate destruction of evidence.",
+  "narrative_technical": "11 critical system log files were absent or zero-byte (including auth.log, syslog, wtmp), consistent with deliberate log destruction. ",
+  "narrative_plain": "The machine's activity records \u2014 the logs that would normally show everything that happened \u2014 were deliberately wiped. 11 critical log files were missing or emptied. This is not an accident. It indicates a deliberate attempt to destroy evidence before the machine was seized.",
+  "narrative_source": "template",
   "verdict": "MEDIUM RISK \u2014 Suspicious activity detected. Further forensic investigation recommended."
 }
