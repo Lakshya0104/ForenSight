@@ -1,13 +1,12 @@
 import argparse
 import os
-import sys
 import time
 from datetime import datetime, timezone
+from collections import Counter, defaultdict
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
-from rich.text import Text
 from rich.columns import Columns
 from rich.rule import Rule
 from rich.align import Align
@@ -17,11 +16,9 @@ from rich import box
 from src.core.os_fingerprint import fingerprint_os
 from src.core.tool_detection import detect_tools
 from src.core.log_analyzer import analyze_logs
-from src.core.timeline_builder import build_timeline
 from src.novelty.temporal_paradox import detect_paradoxes
-from src.novelty.mitre_mapper import map_to_mitre
 from src.novelty.uefi_fingerprint import fingerprint_uefi
-from src.novelty.persona_classifier import classify_persona
+from src.intel.lare import run_lare
 from src.report.json_exporter import export_json
 from src.report.narrative_engine import generate_narrative
 
@@ -77,12 +74,12 @@ def print_scan_summary(result: dict, elapsed: float):
     console.print(Rule("[bold green]  SCAN SUMMARY  [/bold green]", style="green"))
     console.print()
 
-    tools       = result.get("tools_detected", [])
-    paradoxes   = result.get("temporal_paradoxes", [])
-    chain       = result.get("mitre_chain", [])
-    score       = result.get("evasion_score", 0)
-    log         = result.get("log_analysis", {})
-    tl          = result.get("timeline", {})
+    tools        = result.get("tools_detected", [])
+    paradoxes    = result.get("temporal_paradoxes", [])
+    chain        = result.get("mitre_chain", [])
+    score        = result.get("evasion_score", 0)
+    log          = result.get("log_analysis", {})
+    tl           = result.get("timeline", {})
 
     score_color  = "red" if score >= 70 else "yellow" if score >= 40 else "green"
     installed    = len([t for t in tools if t["state"] == "installed"])
@@ -92,15 +89,15 @@ def print_scan_summary(result: dict, elapsed: float):
     phases       = len(set(c["phase"] for c in chain))
 
     cards = [
-        _metric_card("Evasion Score",   f"{score}/100",    score_color),
-        _metric_card("Tools Found",     f"{installed}",    "red"    if installed > 0  else "green"),
-        _metric_card("Ghost Traces",    f"{removed}",      "yellow" if removed > 0    else "green"),
-        _metric_card("Critical Tools",  f"{critical_t}",   "red"    if critical_t > 0 else "green"),
-        _metric_card("Logs Wiped",      f"{missing_logs}", "red"    if missing_logs>0  else "green"),
-        _metric_card("Paradoxes",       f"{len(paradoxes)}","red"   if paradoxes        else "green"),
-        _metric_card("MITRE Phases",    f"{phases}",       "yellow" if phases > 0      else "green"),
-        _metric_card("Files Scanned",   f"{tl.get('total_files_scanned', 0)}", "cyan"),
-        _metric_card("Scan Duration",   f"{elapsed:.1f}s", "dim white"),
+        _metric_card("Evasion Score",  f"{score}/100",     score_color),
+        _metric_card("Tools Found",    f"{installed}",     "red"    if installed > 0   else "green"),
+        _metric_card("Ghost Traces",   f"{removed}",       "yellow" if removed > 0     else "green"),
+        _metric_card("Critical Tools", f"{critical_t}",    "red"    if critical_t > 0  else "green"),
+        _metric_card("Logs Wiped",     f"{missing_logs}",  "red"    if missing_logs > 0 else "green"),
+        _metric_card("Paradoxes",      f"{len(paradoxes)}","red"    if paradoxes        else "green"),
+        _metric_card("MITRE Phases",   f"{phases}",        "yellow" if phases > 0      else "green"),
+        _metric_card("Files Scanned",  f"{tl.get('total_files_scanned', 0)}", "cyan"),
+        _metric_card("Scan Duration",  f"{elapsed:.1f}s",  "dim white"),
     ]
     console.print(Columns(cards, equal=True, expand=True))
     console.print()
@@ -108,15 +105,15 @@ def print_scan_summary(result: dict, elapsed: float):
 
 def print_os_profile(result: dict):
     console.print(Rule("[bold]  OS PROFILE  [/bold]", style="bright_white"))
-    os_p      = result.get("os_profile", {})
-    distro    = os_p.get("distro", "Unknown")
-    confidence= os_p.get("confidence", 0)
-    threat    = os_p.get("threat_level", "NONE")
-    version   = os_p.get("version", "Unknown")
-    kernel    = os_p.get("kernel", "Unknown")
-    pkg_count = os_p.get("offensive_packages_found", 0)
-    evidence  = os_p.get("evidence", [])
-    os_color  = "red" if confidence > 0.7 else "yellow" if confidence > 0.3 else "green"
+    os_p       = result.get("os_profile", {})
+    distro     = os_p.get("distro", "Unknown")
+    confidence = os_p.get("confidence", 0)
+    threat     = os_p.get("threat_level", "NONE")
+    version    = os_p.get("version", "Unknown")
+    kernel     = os_p.get("kernel", "Unknown")
+    pkg_count  = os_p.get("offensive_packages_found", 0)
+    evidence   = os_p.get("evidence", [])
+    os_color   = "red" if confidence > 0.7 else "yellow" if confidence > 0.3 else "green"
 
     left = Panel(
         f"[bold {os_color}]{distro}[/bold {os_color}]\n\n"
@@ -177,8 +174,7 @@ def print_tools(result: dict):
             title=f"[bold {color}]{label}  ({len(group)})[/bold {color}]",
             border_style=color))
 
-    from collections import Counter
-    cats = Counter(t["category"] for t in tools)
+    cats      = Counter(t["category"] for t in tools)
     cat_table = Table(box=box.MINIMAL, show_header=False, expand=False)
     cat_table.add_column("Category", style="cyan")
     cat_table.add_column("Count",    style="bold white", justify="right")
@@ -221,7 +217,7 @@ def print_evasion_score(result: dict):
     t = Table(box=box.SIMPLE_HEAVY, show_header=True,
               header_style="dim", border_style=bar_color, expand=True)
     t.add_column("Signal",       style="white", min_width=30)
-    t.add_column("Points",       style="bold",  min_width=8, justify="right")
+    t.add_column("Points",       style="bold",  min_width=8,  justify="right")
     t.add_column("Contribution", min_width=24)
     t.add_column("Status",       min_width=12)
 
@@ -274,7 +270,6 @@ def print_temporal_paradoxes(result: dict, verbose: bool = False):
     high     = [p for p in paradoxes if p.get("severity") == "high"]
     medium   = [p for p in paradoxes if p.get("severity") == "medium"]
 
-    # ── Always show: compact summary panel ───────────────────────────────
     console.print(Panel(
         f"  [bold red]{len(critical)} CRITICAL[/bold red]   "
         f"[yellow]{len(high)} HIGH[/yellow]   "
@@ -287,7 +282,6 @@ def print_temporal_paradoxes(result: dict, verbose: bool = False):
     ))
     console.print()
 
-    # ── Always show: top 3 critical findings only ─────────────────────────
     top = (critical + high)[:3]
     for p in top:
         sev       = p.get("severity", "unknown")
@@ -311,7 +305,6 @@ def print_temporal_paradoxes(result: dict, verbose: bool = False):
         )
         return
 
-    # ── Verbose only: full table ──────────────────────────────────────────
     if verbose and len(paradoxes) > 3:
         console.print(Rule("[dim red]  Full Paradox Table  [/dim red]", style="red"))
         pt = Table(box=box.SIMPLE_HEAVY, show_header=True,
@@ -352,19 +345,18 @@ def print_mitre(result: dict):
         "Credential Access", "Exfiltration", "Cover Tracks"
     ]
     phase_colors = {
-        "Recon":                 "cyan",
-        "Initial Access":        "blue",
-        "Execution":             "magenta",
-        "Persistence":           "yellow",
-        "Privilege Escalation":  "red",
-        "Defense Evasion":       "bright_red",
-        "Credential Access":     "bright_yellow",
-        "Exfiltration":          "bright_magenta",
-        "Cover Tracks":          "bright_red",
+        "Recon":                "cyan",
+        "Initial Access":       "blue",
+        "Execution":            "magenta",
+        "Persistence":          "yellow",
+        "Privilege Escalation": "red",
+        "Defense Evasion":      "bright_red",
+        "Credential Access":    "bright_yellow",
+        "Exfiltration":         "bright_magenta",
+        "Cover Tracks":         "bright_red",
     }
 
-    from collections import defaultdict
-    by_phase = defaultdict(list)
+    by_phase   = defaultdict(list)
     for c in chain:
         by_phase[c["phase"]].append(c)
 
@@ -376,6 +368,7 @@ def print_mitre(result: dict):
             flow_parts.append(f"[bold {color}]{p}[/bold {color}]")
         else:
             flow_parts.append(f"[dim]{p}[/dim]")
+
     console.print(Panel(
         Align.center(" → ".join(flow_parts)),
         title="[bold]Kill Chain Coverage[/bold]",
@@ -502,15 +495,38 @@ def print_timeline(result: dict):
     console.print()
 
 
+def print_lare_summary(result: dict):
+    lare = result.get("lare", {})
+    if not lare:
+        return
+    html_path   = lare.get("html_report", "")
+    total_events= lare.get("total_events", 0)
+    phases_hit  = lare.get("phases_hit", [])
+
+    console.print(Rule("[bold green]  LARE — ATTACK RECONSTRUCTION  [/bold green]", style="green"))
+    console.print(Panel(
+        f"[bold green]{total_events}[/bold green] attack events reconstructed across "
+        f"[bold yellow]{len(phases_hit)}[/bold yellow] ATT&CK phases\n\n"
+        f"[dim]Phases:[/dim] {' → '.join(phases_hit) if phases_hit else 'None detected'}\n\n"
+        f"[bold green]Interactive timeline →[/bold green] "
+        f"[underline]{html_path}[/underline]\n"
+        f"[dim]Open in browser to explore the full animated attack reconstruction.[/dim]",
+        title="[bold]LARE — Live Attack Reconstruction Engine[/bold]",
+        border_style="green",
+        padding=(1, 2)
+    ))
+    console.print()
+
+
 def print_narrative(result: dict):
     console.print(Rule("[bold]  INVESTIGATIVE NARRATIVE  [/bold]", style="bright_white"))
     source = result.get("narrative_source", "template")
 
     source_label = {
-        "groq-llama3":  "[bold green]Groq  ·  LLaMA 3[/bold green]",
-        "anthropic-api":"[bold green]Anthropic  ·  Claude[/bold green]",
+        "groq-llama3":   "[bold green]Groq  ·  LLaMA 3[/bold green]",
+        "anthropic-api": "[bold green]Anthropic  ·  Claude[/bold green]",
         "ollama-mistral":"[bold green]Ollama  ·  Mistral (local)[/bold green]",
-        "template":     "[dim]Template engine[/dim]",
+        "template":      "[dim]Template engine[/dim]",
     }.get(source, "[dim]Template engine[/dim]")
 
     tech  = result.get("narrative_technical", "")
@@ -571,16 +587,18 @@ def print_results(result: dict, elapsed: float, verbose: bool = False):
     print_os_profile(result)
     print_tools(result)
     print_evasion_score(result)
-    print_temporal_paradoxes(result, verbose=verbose)   # <- pass it here
+    print_temporal_paradoxes(result, verbose=verbose)
     print_mitre(result)
     print_persona(result)
     print_uefi(result)
     print_timeline(result)
+    print_lare_summary(result)
     print_narrative(result)
     print_verdict(result, elapsed)
 
 
-def run_scan(target: str, output_path: str = "forensight_report.json", demo: bool = False, verbose: bool = False):
+def run_scan(target: str, output_path: str = "forensight_report.json",
+             demo: bool = False, verbose: bool = False):
     print_banner()
     start = time.time()
 
@@ -603,20 +621,19 @@ def run_scan(target: str, output_path: str = "forensight_report.json", demo: boo
     }
 
     steps = [
-        ("[1/8] OS Fingerprinting       ", lambda: fingerprint_os(target)),
-        ("[2/8] Tool Detection          ", lambda: detect_tools(target)),
-        ("[3/8] Log Analysis            ", lambda: analyze_logs(target)),
-        ("[4/8] Timeline Reconstruction ", lambda: build_timeline(target)),
-        ("[5/8] Temporal Paradox Engine ", lambda: detect_paradoxes(target)),
-        ("[6/8] MITRE ATT&CK Mapping    ", lambda: map_to_mitre(target)),
-        ("[7/8] UEFI Fingerprinting     ", lambda: fingerprint_uefi()),
-        ("[8/8] Persona Classification  ", lambda: classify_persona(
-            result.get("tools_detected", []),
-            result.get("temporal_paradoxes", [])
+        ("[1/6] OS Fingerprinting       ", lambda: fingerprint_os(target)),
+        ("[2/6] Tool Detection          ", lambda: detect_tools(target)),
+        ("[3/6] Log Analysis            ", lambda: analyze_logs(target)),
+        ("[4/6] Temporal Paradox Engine ", lambda: detect_paradoxes(target)),
+        ("[5/6] UEFI Fingerprinting     ", lambda: fingerprint_uefi()),
+        ("[6/6] LARE Intelligence Engine", lambda: run_lare(
+            target,
+            paradoxes=result.get("temporal_paradoxes", []),
+            tools_detected=result.get("tools_detected", [])
         )),
     ]
-    keys = ["os_profile", "tools_detected", "log_analysis", "timeline",
-            "temporal_paradoxes", "mitre_chain", "uefi", "_persona"]
+    keys = ["os_profile", "tools_detected", "log_analysis",
+            "temporal_paradoxes", "uefi", "lare"]
 
     with Progress(
         SpinnerColumn(spinner_name="dots", style="bold green"),
@@ -632,18 +649,22 @@ def run_scan(target: str, output_path: str = "forensight_report.json", demo: boo
             progress.update(task, description=label)
             try:
                 val = fn()
-                if key == "_persona":
-                    result["persona"], result["persona_confidence"] = val
-                else:
-                    result[key] = val
+                result[key] = val
             except Exception as e:
                 result[key] = {"error": str(e)}
                 console.print(f"  [red]✗ Error in {key}: {e}[/red]")
             progress.advance(task)
 
+    # Extract LARE sub-results into top-level keys
+    lare = result.get("lare", {})
+    result["persona"]            = lare.get("persona", "Unknown")
+    result["persona_confidence"] = lare.get("persona_confidence", 0.0)
+    result["timeline"]           = lare.get("timeline", {})
+    result["mitre_chain"]        = lare.get("mitre_chain", [])
+
     result["evasion_score"], result["evasion_breakdown"] = calculate_evasion_score(result)
 
-    narrative                    = generate_narrative(result)
+    narrative                     = generate_narrative(result)
     result["narrative_technical"] = narrative.get("technical", "")
     result["narrative_plain"]     = narrative.get("plain", "")
     result["narrative_source"]    = narrative.get("source", "template")
@@ -655,10 +676,13 @@ def run_scan(target: str, output_path: str = "forensight_report.json", demo: boo
     print_results(result, elapsed, verbose=verbose)
     export_json(result, output_path)
 
+    html_path = lare.get("html_report", "")
     console.print(Panel(
-        f"[bold green]✓ Report saved[/bold green] → "
+        f"[bold green]✓ JSON report  [/bold green] → "
         f"[underline]{os.path.abspath(output_path)}[/underline]\n"
-        f"[dim]Scan completed in {elapsed:.2f}s[/dim]",
+        + (f"[bold green]✓ LARE timeline[/bold green] → "
+           f"[underline]{html_path}[/underline]\n" if html_path else "")
+        + f"[dim]Scan completed in {elapsed:.2f}s[/dim]",
         border_style="green", padding=(0, 2)
     ))
     console.print()
@@ -721,16 +745,16 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
-            "  python main.py /                          # scan live system\n"
-            "  python main.py /mnt/disk                  # scan mounted disk image\n"
-            "  python main.py / --output report.json     # custom output path\n"
-            "  python main.py / --demo                   # run demo scenario\n"
+            "  python main.py /                           # scan live system\n"
+            "  python main.py /mnt/disk                   # scan mounted disk image\n"
+            "  python main.py / --output report.json      # custom output path\n"
+            "  python main.py / --demo                    # run demo scenario\n"
+            "  python main.py / --verbose                 # show full paradox table\n"
         )
     )
-    parser.add_argument("target",   help="Target path (/ for live system, or mounted disk image path)")
-    parser.add_argument("--output", default="forensight_report.json", help="Output JSON report path")
-    parser.add_argument("--demo",   action="store_true", help="Run demo with simulated Tails scenario")
-    parser.add_argument("--verbose", action="store_true",
-                    help="Show full paradox table and extended output")
+    parser.add_argument("target",    help="Target path (/ for live system, or mounted disk image path)")
+    parser.add_argument("--output",  default="forensight_report.json", help="Output JSON report path")
+    parser.add_argument("--demo",    action="store_true", help="Run demo with simulated Tails scenario")
+    parser.add_argument("--verbose", action="store_true", help="Show full paradox table and extended output")
     args = parser.parse_args()
     run_scan(args.target, args.output, args.demo, args.verbose)
