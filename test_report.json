@@ -2,7 +2,7 @@
   "scan_meta": {
     "tool": "ForenSight",
     "version": "1.0.0",
-    "scan_time": "2026-03-16T15:41:28.848473+00:00",
+    "scan_time": "2026-03-16T16:59:53.100720+00:00",
     "target": "C:\\Cybershield\\mock_target",
     "mode": "live"
   },
@@ -75,6 +75,32 @@
     "ssh_connections": [],
     "log_coverage": 0.0
   },
+  "temporal_paradoxes": [],
+  "uefi": {
+    "usb_boot_signature": false,
+    "last_boot_device": "Unknown",
+    "boot_entries": [],
+    "firmware_evidence": "EFI vars not accessible (run as root on Linux)"
+  },
+  "lare": {
+    "timeline": {
+      "total_files_scanned": 0,
+      "suspicious_files_found": 0,
+      "suspicious_files": [],
+      "recently_modified": [],
+      "recently_accessed": [],
+      "full_timeline": []
+    },
+    "mitre_chain": [],
+    "persona": "Unknown",
+    "persona_confidence": 0.0,
+    "attack_events": [],
+    "html_report": "C:\\Cybershield\\ForenSight\\lare_report.html",
+    "phases_hit": [],
+    "total_events": 0
+  },
+  "persona": "Unknown",
+  "persona_confidence": 0.0,
   "timeline": {
     "total_files_scanned": 0,
     "suspicious_files_found": 0,
@@ -83,16 +109,7 @@
     "recently_accessed": [],
     "full_timeline": []
   },
-  "temporal_paradoxes": [],
   "mitre_chain": [],
-  "uefi": {
-    "usb_boot_signature": false,
-    "last_boot_device": "Unknown",
-    "boot_entries": [],
-    "firmware_evidence": "EFI vars not accessible (run as root on Linux)"
-  },
-  "persona": "Unknown",
-  "persona_confidence": 0.0,
   "evasion_score": 40,
   "evasion_breakdown": {
     "log_wipe": 25,
