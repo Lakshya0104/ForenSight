@@ -259,7 +259,7 @@ def print_evasion_score(result: dict):
     console.print()
 
 
-def print_temporal_paradoxes(result: dict):
+def print_temporal_paradoxes(result: dict, verbose: bool = False):
     paradoxes = result.get("temporal_paradoxes", [])
     console.print(Rule("[bold red]  TEMPORAL PARADOX ENGINE  [/bold red]", style="red"))
     if not paradoxes:
@@ -272,38 +272,68 @@ def print_temporal_paradoxes(result: dict):
 
     critical = [p for p in paradoxes if p.get("severity") == "critical"]
     high     = [p for p in paradoxes if p.get("severity") == "high"]
+    medium   = [p for p in paradoxes if p.get("severity") == "medium"]
 
-    pt = Table(box=box.SIMPLE_HEAVY, show_header=True,
-               header_style="bold red", border_style="red", expand=True)
-    pt.add_column("Severity",   min_width=10)
-    pt.add_column("Type",       style="bold white", min_width=28)
-    pt.add_column("File",       style="dim white",  min_width=28)
-    pt.add_column("Delta",      style="yellow",     min_width=10, justify="right")
-    pt.add_column("Court Note", style="dim",        min_width=40)
-
-    for p in paradoxes:
-        sev     = p.get("severity", "unknown")
-        sev_fmt = (f"[bold red]{sev.upper()}[/bold red]"
-                   if sev == "critical" else f"[yellow]{sev.upper()}[/yellow]")
-        delta   = f"{p.get('delta_seconds', 0):.2f}s" if "delta_seconds" in p else "—"
-        pt.add_row(
-            sev_fmt,
-            p.get("type", "").replace("_", " "),
-            p.get("file", ""),
-            delta,
-            p.get("court_note", "—")
-        )
-
+    # ── Always show: compact summary panel ───────────────────────────────
     console.print(Panel(
-        f"[bold red]{len(critical)} CRITICAL[/bold red]  "
-        f"[yellow]{len(high)} HIGH[/yellow]  "
-        f"[dim]{len(paradoxes)} total paradox(es)[/dim]\n\n"
-        f"[dim italic]These violations represent mathematically impossible filesystem states.\n"
-        f"Each is court-admissible proof of deliberate timestamp manipulation.[/dim italic]",
+        f"  [bold red]{len(critical)} CRITICAL[/bold red]   "
+        f"[yellow]{len(high)} HIGH[/yellow]   "
+        f"[dim]{len(medium)} MEDIUM[/dim]   "
+        f"[dim]({len(paradoxes)} total)[/dim]\n\n"
+        f"  [dim italic]Mathematically impossible filesystem states detected.\n"
+        f"  Each is court-admissible proof of deliberate timestamp manipulation.[/dim italic]",
         title=f"[bold red]Temporal Paradoxes — {len(paradoxes)} Detected[/bold red]",
         border_style="red"
     ))
-    console.print(pt)
+    console.print()
+
+    # ── Always show: top 3 critical findings only ─────────────────────────
+    top = (critical + high)[:3]
+    for p in top:
+        sev       = p.get("severity", "unknown")
+        sev_color = "bold red" if sev == "critical" else "yellow"
+        delta     = f"{p.get('delta_seconds', 0):.2f}s" if "delta_seconds" in p else "—"
+        console.print(Panel(
+            f"[dim]File        [/dim] [white]{p.get('file', '—')}[/white]\n"
+            f"[dim]Type        [/dim] [bold]{p.get('type','').replace('_',' ')}[/bold]\n"
+            f"[dim]Delta       [/dim] [yellow]{delta}[/yellow]\n"
+            f"[dim]Attacker    [/dim] [dim italic]{p.get('attacker_action', '—')}[/dim italic]\n"
+            f"[dim]Court note  [/dim] [dim]{p.get('court_note', '—')}[/dim]",
+            title=f"[{sev_color}]{sev.upper()}[/{sev_color}]",
+            border_style="red" if sev == "critical" else "yellow",
+            padding=(0, 1)
+        ))
+
+    if len(paradoxes) > 3 and not verbose:
+        console.print(
+            f"  [dim]+ {len(paradoxes) - 3} more paradoxes hidden — "
+            f"run with [/dim][bold white]--verbose[/bold white][dim] to see full table[/dim]\n"
+        )
+        return
+
+    # ── Verbose only: full table ──────────────────────────────────────────
+    if verbose and len(paradoxes) > 3:
+        console.print(Rule("[dim red]  Full Paradox Table  [/dim red]", style="red"))
+        pt = Table(box=box.SIMPLE_HEAVY, show_header=True,
+                   header_style="bold red", border_style="red", expand=True)
+        pt.add_column("Sev",        min_width=10)
+        pt.add_column("Type",       style="bold white", min_width=26)
+        pt.add_column("File",       style="dim white",  min_width=26)
+        pt.add_column("Delta",      style="yellow",     min_width=10, justify="right")
+        pt.add_column("Court Note", style="dim",        min_width=38)
+        for p in paradoxes:
+            sev     = p.get("severity", "unknown")
+            sev_fmt = (f"[bold red]{sev.upper()}[/bold red]"
+                       if sev == "critical" else f"[yellow]{sev.upper()}[/yellow]")
+            delta   = f"{p.get('delta_seconds', 0):.2f}s" if "delta_seconds" in p else "—"
+            pt.add_row(
+                sev_fmt,
+                p.get("type", "").replace("_", " "),
+                p.get("file", ""),
+                delta,
+                p.get("court_note", "—")
+            )
+        console.print(pt)
     console.print()
 
 
@@ -536,12 +566,12 @@ def print_verdict(result: dict, elapsed: float):
     console.print()
 
 
-def print_results(result: dict, elapsed: float):
+def print_results(result: dict, elapsed: float, verbose: bool = False):
     print_scan_summary(result, elapsed)
     print_os_profile(result)
     print_tools(result)
     print_evasion_score(result)
-    print_temporal_paradoxes(result)
+    print_temporal_paradoxes(result, verbose=verbose)   # <- pass it here
     print_mitre(result)
     print_persona(result)
     print_uefi(result)
@@ -622,7 +652,7 @@ def run_scan(target: str, output_path: str = "forensight_report.json", demo: boo
 
     elapsed = time.time() - start
     console.print()
-    print_results(result, elapsed)
+    print_results(result, elapsed, verbose=verbose)
     export_json(result, output_path)
 
     console.print(Panel(
@@ -700,5 +730,7 @@ if __name__ == "__main__":
     parser.add_argument("target",   help="Target path (/ for live system, or mounted disk image path)")
     parser.add_argument("--output", default="forensight_report.json", help="Output JSON report path")
     parser.add_argument("--demo",   action="store_true", help="Run demo with simulated Tails scenario")
+    parser.add_argument("--verbose", action="store_true",
+                    help="Show full paradox table and extended output")
     args = parser.parse_args()
-    run_scan(args.target, args.output, args.demo)
+    run_scan(args.target, args.output, args.demo, args.verbose)
