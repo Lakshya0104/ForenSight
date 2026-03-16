@@ -1,0 +1,108 @@
+{
+  "scan_meta": {
+    "tool": "ForenSight",
+    "version": "1.0.0",
+    "scan_time": "2026-03-16T06:18:08.192838Z",
+    "target": "C:\\Cybershield\\mock_target",
+    "mode": "live"
+  },
+  "os_profile": {
+    "distro": "Unknown",
+    "version": "Unknown",
+    "kernel": "Unknown",
+    "confidence": 0.0,
+    "threat_level": "NONE",
+    "offensive_packages_found": 0,
+    "evidence": [
+      "No offensive OS markers detected"
+    ]
+  },
+  "tools_detected": [],
+  "log_analysis": {
+    "logs_cleared": true,
+    "history_cleared": true,
+    "missing_logs": [
+      {
+        "path": "/var/log/auth.log",
+        "description": "Authentication events (SSH, sudo, login failures)"
+      },
+      {
+        "path": "/var/log/syslog",
+        "description": "General system activity"
+      },
+      {
+        "path": "/var/log/kern.log",
+        "description": "Kernel messages"
+      },
+      {
+        "path": "/var/log/messages",
+        "description": "General messages (RHEL/CentOS)"
+      },
+      {
+        "path": "/var/log/wtmp",
+        "description": "Login/logout history (binary)"
+      },
+      {
+        "path": "/var/log/btmp",
+        "description": "Failed login attempts (binary)"
+      },
+      {
+        "path": "/var/log/lastlog",
+        "description": "Last login per user (binary)"
+      },
+      {
+        "path": "/var/log/secure",
+        "description": "Security events (RHEL/CentOS)"
+      },
+      {
+        "path": "/var/log/faillog",
+        "description": "Failed authentication log"
+      },
+      {
+        "path": "/var/log/apt/history.log",
+        "description": "Package install/remove history"
+      },
+      {
+        "path": "/var/log/dpkg.log",
+        "description": "Package manager log"
+      }
+    ],
+    "wiped_logs": [],
+    "evasion_commands_found": [],
+    "suspicious_commands_found": [],
+    "failed_logins": 0,
+    "sudo_attempts": 0,
+    "ssh_connections": [],
+    "log_coverage": 0.0
+  },
+  "timeline": {
+    "total_files_scanned": 0,
+    "suspicious_files_found": 0,
+    "suspicious_files": [],
+    "recently_modified": [],
+    "recently_accessed": [],
+    "full_timeline": []
+  },
+  "temporal_paradoxes": [],
+  "mitre_chain": [],
+  "uefi": {
+    "usb_boot_signature": false,
+    "last_boot_device": "Unknown",
+    "boot_entries": [],
+    "firmware_evidence": "EFI vars not accessible (run as root on Linux)"
+  },
+  "persona": "Unknown",
+  "persona_confidence": 0.0,
+  "evasion_score": 40,
+  "evasion_breakdown": {
+    "log_wipe": 25,
+    "history_clear": 15,
+    "timestamp_manipulation": 0,
+    "anti_forensic_tools": 0,
+    "anonymization_tools": 0,
+    "uefi_boot_anomaly": 0,
+    "offensive_os": 0
+  },
+  "narrative": "11 critical log file(s) were missing or wiped, including authentication logs and system activity records. This represents deliberate destruction of evidence.",
+  "verdict": "MEDIUM RISK \u2014 Suspicious activity detected. Further forensic investigation recommended."
+}
