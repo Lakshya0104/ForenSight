@@ -941,7 +941,7 @@ body::after {
   <div class="hero-sub">LARE &nbsp;·&nbsp; MITRE ATT&CK &nbsp;·&nbsp; TEMPORAL PARADOX &nbsp;·&nbsp; ATTACKER PERSONA</div>
   <div class="hero-meta">
     <div class="hero-meta-item"><strong>C:\Cybershield\mock_target</strong>TARGET</div>
-    <div class="hero-meta-item"><strong>2026-03-16 20:27:58 UTC</strong>SCAN TIME</div>
+    <div class="hero-meta-item"><strong>2026-03-16 20:44:26 UTC</strong>SCAN TIME</div>
     <div class="hero-meta-item"><strong>v1.0.0</strong>VERSION</div>
     <div class="hero-meta-item"><strong>TEAM CYBER NUGGETS</strong>TEAM</div>
   </div>
@@ -964,7 +964,7 @@ body::after {
   </div>
   <div class="metrics-grid reveal">
     <div class="metric-card" style="--accent:var(--green)">
-      <div class="metric-val">0</div>
+      <div class="metric-val">2</div>
       <div class="metric-label">Attack Events</div>
       <div class="metric-sub">Reconstructed from artifacts</div>
     </div>
@@ -973,8 +973,8 @@ body::after {
       <div class="metric-label">Critical Events</div>
       <div class="metric-sub">Immediate escalation required</div>
     </div>
-    <div class="metric-card" style="--accent:var(--green)">
-      <div class="metric-val">0</div>
+    <div class="metric-card" style="--accent:var(--amber)">
+      <div class="metric-val">1</div>
       <div class="metric-label">ATT&CK Phases</div>
       <div class="metric-sub">Kill chain coverage</div>
     </div>
@@ -983,8 +983,8 @@ body::after {
       <div class="metric-label">Paradoxes</div>
       <div class="metric-sub">Timestamp impossibilities</div>
     </div>
-    <div class="metric-card" style="--accent:var(--green)">
-      <div class="metric-val">0</div>
+    <div class="metric-card" style="--accent:var(--red)">
+      <div class="metric-val">2</div>
       <div class="metric-label">Active Tools</div>
       <div class="metric-sub">Confirmed on filesystem</div>
     </div>
@@ -1007,14 +1007,14 @@ body::after {
     </div>
     <div class="section-line"></div>
   </div>
-  <div class="persona-block reveal" style="--p-color:#888780">
-    <div class="persona-badge">Unknown</div>
+  <div class="persona-block reveal" style="--p-color:#E24B4A">
+    <div class="persona-badge">Network Intrusion Operator</div>
     <div>
       <div class="persona-info-title">Behavioral Profile</div>
-      <div class="persona-info-desc">Insufficient tool data to classify attacker archetype. More forensic artifacts required for confident classification.</div>
+      <div class="persona-info-desc">Focused on network scanning, exploitation, and gaining remote shells.</div>
     </div>
     <div class="persona-conf-block">
-      <div class="persona-conf-val">0%</div>
+      <div class="persona-conf-val">17%</div>
       <div class="persona-conf-label">Confidence</div>
     </div>
   </div>
@@ -1033,7 +1033,7 @@ body::after {
   </div>
 
   <div class="killchain reveal" id="killchain">
-    <span class="kc-phase" style="color:#378ADD;background:#378ADD18">Recon</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#7F77DD;background:#7F77DD18">Initial Access</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#D85A30;background:#D85A3018">Execution</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#EF9F27;background:#EF9F2718">Persistence</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#E24B4A;background:#E24B4A18">Privilege Escalation</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#A32D2D;background:#A32D2D18">Defense Evasion</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#BA7517;background:#BA751718">Credential Access</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#D4537E;background:#D4537E18">Exfiltration</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#791F1F;background:#791F1F18">Cover Tracks</span>
+    <span class="kc-phase hit" style="color:#378ADD;background:#378ADD18">Recon</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#7F77DD;background:#7F77DD18">Initial Access</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#D85A30;background:#D85A3018">Execution</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#EF9F27;background:#EF9F2718">Persistence</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#E24B4A;background:#E24B4A18">Privilege Escalation</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#A32D2D;background:#A32D2D18">Defense Evasion</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#BA7517;background:#BA751718">Credential Access</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#D4537E;background:#D4537E18">Exfiltration</span><span class="kc-arrow">→</span><span class="kc-phase" style="color:#791F1F;background:#791F1F18">Cover Tracks</span>
   </div>
 
   <div class="mitre-grid reveal" id="mitre-grid">
@@ -1113,10 +1113,10 @@ body::after {
     <div class="verdict-risk" id="verdict-text">ANALYZING...</div>
     <div class="verdict-detail" id="verdict-detail"></div>
     <div class="verdict-stats">
-      <div class="vstat"><div class="vstat-val" id="vs-events">0</div><div class="vstat-label">Events</div></div>
-      <div class="vstat"><div class="vstat-val" id="vs-phases">0</div><div class="vstat-label">ATT&CK Phases</div></div>
+      <div class="vstat"><div class="vstat-val" id="vs-events">2</div><div class="vstat-label">Events</div></div>
+      <div class="vstat"><div class="vstat-val" id="vs-phases">1</div><div class="vstat-label">ATT&CK Phases</div></div>
       <div class="vstat"><div class="vstat-val" id="vs-paradoxes">0</div><div class="vstat-label">Paradoxes</div></div>
-      <div class="vstat"><div class="vstat-val" id="vs-tools">0</div><div class="vstat-label">Tools Found</div></div>
+      <div class="vstat"><div class="vstat-val" id="vs-tools">2</div><div class="vstat-label">Tools Found</div></div>
     </div>
   </div>
 </section>
@@ -1124,16 +1124,64 @@ body::after {
 <div class="section-divider"></div>
 <footer class="footer">
   <div class="footer-logo">FORENSIGHT</div>
-  <div>LARE Report &nbsp;·&nbsp; 2026-03-16 20:27:58 UTC &nbsp;·&nbsp; 0 events across 0 ATT&CK phases</div>
+  <div>LARE Report &nbsp;·&nbsp; 2026-03-16 20:44:26 UTC &nbsp;·&nbsp; 2 events across 1 ATT&CK phases</div>
   <div>Team Cyber Nuggets &nbsp;·&nbsp; v1.0.0</div>
 </footer>
 
 </div>
 
 <script>
-const EVENTS    = [];
+const EVENTS    = [
+  {
+    "id": "tool-0",
+    "type": "tool",
+    "phase": "Recon",
+    "tactic": "Sniffing",
+    "technique": "",
+    "title": "Wireshark (active)",
+    "description": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)",
+    "evidence": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)",
+    "severity": "high",
+    "state": "installed",
+    "color": "#E24B4A",
+    "icon": "tool"
+  },
+  {
+    "id": "tool-1",
+    "type": "tool",
+    "phase": "Recon",
+    "tactic": "Recon",
+    "technique": "",
+    "title": "Nmap (active)",
+    "description": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)",
+    "evidence": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)",
+    "severity": "high",
+    "state": "installed",
+    "color": "#E24B4A",
+    "icon": "tool"
+  }
+];
 const PARADOXES = [];
-const TOOLS     = [];
+const TOOLS     = [
+  {
+    "name": "Wireshark",
+    "category": "sniffing",
+    "risk": "HIGH",
+    "state": "installed",
+    "path": "C:\\Program Files\\Wireshark",
+    "size_bytes": 40960,
+    "evidence": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)"
+  },
+  {
+    "name": "Nmap",
+    "category": "recon",
+    "risk": "HIGH",
+    "state": "installed",
+    "path": "C:\\Program Files (x86)\\Nmap",
+    "size_bytes": 8192,
+    "evidence": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)"
+  }
+];
 const PHASE_COLORS = {"Recon": "#378ADD", "Initial Access": "#7F77DD", "Execution": "#D85A30", "Persistence": "#EF9F27", "Privilege Escalation": "#E24B4A", "Defense Evasion": "#A32D2D", "Credential Access": "#BA7517", "Exfiltration": "#D4537E", "Cover Tracks": "#791F1F"};
 const PERSONA_COLORS = {"Network Intrusion Operator": "#E24B4A", "Data Exfiltrator": "#EF9F27", "Credential Harvester": "#D85A30", "Web Application Attacker": "#7F77DD", "Wireless Attacker": "#1D9E75", "Insider Threat": "#D4537E", "Advanced Persistent Threat (APT)": "#E24B4A"};
 
@@ -1333,12 +1381,12 @@ function buildTools() {
 
 // ── Verdict ──────────────────────────────────────────────────
 function buildVerdict() {
-  const score = 0 * 10;
+  const score = 2 * 10;
   const vtext = document.getElementById('verdict-text');
   const vdet  = document.getElementById('verdict-detail');
   const vblock= document.getElementById('verdict-block');
   const critical = 0;
-  const phases   = 0;
+  const phases   = 1;
 
   if (critical > 0 || phases >= 4) {
     vtext.textContent = 'HIGH RISK';

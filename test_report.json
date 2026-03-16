@@ -2,7 +2,7 @@
   "scan_meta": {
     "tool": "ForenSight",
     "version": "1.0.0",
-    "scan_time": "2026-03-16T20:27:58.608418+00:00",
+    "scan_time": "2026-03-16T20:43:54.465722+00:00",
     "target": "C:\\Cybershield\\mock_target",
     "mode": "live"
   },
@@ -17,7 +17,26 @@
       "No offensive OS markers detected"
     ]
   },
-  "tools_detected": [],
+  "tools_detected": [
+    {
+      "name": "Wireshark",
+      "category": "sniffing",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "C:\\Program Files\\Wireshark",
+      "size_bytes": 40960,
+      "evidence": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)"
+    },
+    {
+      "name": "Nmap",
+      "category": "recon",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "C:\\Program Files (x86)\\Nmap",
+      "size_bytes": 8192,
+      "evidence": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)"
+    }
+  ],
   "log_analysis": {
     "logs_cleared": true,
     "history_cleared": true,
@@ -92,15 +111,46 @@
       "full_timeline": []
     },
     "mitre_chain": [],
-    "persona": "Unknown",
-    "persona_confidence": 0.0,
-    "attack_events": [],
+    "persona": "Network Intrusion Operator",
+    "persona_confidence": 0.17,
+    "attack_events": [
+      {
+        "id": "tool-0",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Sniffing",
+        "technique": "",
+        "title": "Wireshark (active)",
+        "description": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)",
+        "evidence": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-1",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Recon",
+        "technique": "",
+        "title": "Nmap (active)",
+        "description": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)",
+        "evidence": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      }
+    ],
     "html_report": "C:\\Cybershield\\ForenSight\\lare_report.html",
-    "phases_hit": [],
-    "total_events": 0
+    "phases_hit": [
+      "Recon"
+    ],
+    "total_events": 2
   },
-  "persona": "Unknown",
-  "persona_confidence": 0.0,
+  "persona": "Network Intrusion Operator",
+  "persona_confidence": 0.17,
   "timeline": {
     "total_files_scanned": 0,
     "suspicious_files_found": 0,
@@ -120,8 +170,8 @@
     "uefi_boot_anomaly": 0,
     "offensive_os": 0
   },
-  "narrative_technical": "11 critical system log files were absent or zero-byte (including auth.log, syslog, wtmp), consistent with deliberate log destruction. ",
-  "narrative_plain": "The machine's activity records \u2014 the logs that would normally show everything that happened \u2014 were deliberately wiped. 11 critical log files were missing or emptied. This is not an accident. It indicates a deliberate attempt to destroy evidence before the machine was seized.",
+  "narrative_technical": "Active offensive binaries confirmed at expected filesystem paths: Wireshark, Nmap. 11 critical system log files were absent or zero-byte (including auth.log, syslog, wtmp), consistent with deliberate log destruction. ",
+  "narrative_plain": "Hacking tools were found actively installed on the machine: Wireshark, Nmap. The machine's activity records \u2014 the logs that would normally show everything that happened \u2014 were deliberately wiped. 11 critical log files were missing or emptied. This is not an accident. It indicates a deliberate attempt to destroy evidence before the machine was seized.",
   "narrative_source": "template",
   "verdict": "MEDIUM RISK \u2014 Suspicious activity detected. Further forensic investigation recommended."
 }

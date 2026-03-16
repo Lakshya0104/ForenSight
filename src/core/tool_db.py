@@ -6,6 +6,80 @@ from datetime import datetime, timezone
 TOOL_DB_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "tool_db.json")
 TOOL_DB_PATH = os.path.normpath(TOOL_DB_PATH)
 
+WINDOWS_OFFENSIVE_TOOLS = {
+    # Credential dumping
+    "mimikatz":        {"category": "credential-access",   "risk": "CRITICAL"},
+    "mimikatz.exe":    {"category": "credential-access",   "risk": "CRITICAL"},
+    "wce.exe":         {"category": "credential-access",   "risk": "CRITICAL"},
+    "pwdump":          {"category": "credential-access",   "risk": "CRITICAL"},
+    "fgdump":          {"category": "credential-access",   "risk": "CRITICAL"},
+    # Recon
+    "nmap":            {"category": "recon",               "risk": "HIGH"},
+    "nmap.exe":        {"category": "recon",               "risk": "HIGH"},
+    "masscan":         {"category": "recon",               "risk": "HIGH"},
+    "sharphound":      {"category": "recon",               "risk": "CRITICAL"},
+    "sharphound.exe":  {"category": "recon",               "risk": "CRITICAL"},
+    "bloodhound":      {"category": "recon",               "risk": "CRITICAL"},
+    # Exploitation
+    "metasploit":      {"category": "exploitation",        "risk": "CRITICAL"},
+    "msfconsole":      {"category": "exploitation",        "risk": "CRITICAL"},
+    "cobalt strike":   {"category": "exploitation",        "risk": "CRITICAL"},
+    "cobaltstrike":    {"category": "exploitation",        "risk": "CRITICAL"},
+    "havoc":           {"category": "exploitation",        "risk": "CRITICAL"},
+    "sliver":          {"category": "exploitation",        "risk": "CRITICAL"},
+    "covenant":        {"category": "exploitation",        "risk": "CRITICAL"},
+    # Post exploitation
+    "powersploit":     {"category": "post-exploitation",   "risk": "CRITICAL"},
+    "empire":          {"category": "post-exploitation",   "risk": "CRITICAL"},
+    "rubeus.exe":      {"category": "post-exploitation",   "risk": "CRITICAL"},
+    "certify.exe":     {"category": "post-exploitation",   "risk": "CRITICAL"},
+    "sharpup.exe":     {"category": "post-exploitation",   "risk": "CRITICAL"},
+    "seatbelt.exe":    {"category": "post-exploitation",   "risk": "HIGH"},
+    "winpeas.exe":     {"category": "post-exploitation",   "risk": "HIGH"},
+    "winpeas.bat":     {"category": "post-exploitation",   "risk": "HIGH"},
+    # Lateral movement
+    "psexec.exe":      {"category": "lateral-movement",    "risk": "CRITICAL"},
+    "paexec.exe":      {"category": "lateral-movement",    "risk": "CRITICAL"},
+    "wmiexec":         {"category": "lateral-movement",    "risk": "CRITICAL"},
+    "crackmapexec":    {"category": "lateral-movement",    "risk": "CRITICAL"},
+    # Sniffing
+    "wireshark":       {"category": "sniffing",            "risk": "HIGH"},
+    "wireshark.exe":   {"category": "sniffing",            "risk": "HIGH"},
+    "rawcap.exe":      {"category": "sniffing",            "risk": "HIGH"},
+    # Anti-forensic
+    "eraser":          {"category": "anti-forensic",       "risk": "CRITICAL"},
+    "cipher.exe":      {"category": "anti-forensic",       "risk": "HIGH"},
+    "sdelete.exe":     {"category": "anti-forensic",       "risk": "CRITICAL"},
+    "ccleaner":        {"category": "anti-forensic",       "risk": "HIGH"},
+    "bleachbit":       {"category": "anti-forensic",       "risk": "CRITICAL"},
+    # Brute force
+    "hydra.exe":       {"category": "brute-force",         "risk": "CRITICAL"},
+    "hashcat.exe":     {"category": "brute-force",         "risk": "HIGH"},
+    "john.exe":        {"category": "brute-force",         "risk": "HIGH"},
+    # C2 / RATs
+    "nc.exe":          {"category": "c2",                  "risk": "HIGH"},
+    "ncat.exe":        {"category": "c2",                  "risk": "HIGH"},
+    "netcat.exe":      {"category": "c2",                  "risk": "HIGH"},
+    "socat.exe":       {"category": "c2",                  "risk": "HIGH"},
+    # Tunneling
+    "ngrok.exe":       {"category": "tunneling",           "risk": "HIGH"},
+    "chisel.exe":      {"category": "tunneling",           "risk": "CRITICAL"},
+    "ligolo":          {"category": "tunneling",           "risk": "CRITICAL"},
+    # Anonymization
+    "tor.exe":         {"category": "anonymization",       "risk": "HIGH"},
+    "proxifier":       {"category": "anonymization",       "risk": "HIGH"},
+}
+
+WINDOWS_SCAN_PATHS = [
+    "C:\\Tools",
+    "C:\\Windows\\Temp",
+    "C:\\Temp",
+    "C:\\ProgramData",
+    "C:\\Users\\Public",
+    "C:\\Program Files\\",
+    "C:\\Program Files (x86)\\",
+]
+
 KALI_CATEGORIES = [
     "kali-tools-top10",
     "kali-tools-information-gathering",
