@@ -580,7 +580,7 @@ def print_results(result: dict, elapsed: float, verbose: bool = False):
     print_verdict(result, elapsed)
 
 
-def run_scan(target: str, output_path: str = "forensight_report.json", demo: bool = False):
+def run_scan(target: str, output_path: str = "forensight_report.json", demo: bool = False, verbose: bool = False):
     print_banner()
     start = time.time()
 
