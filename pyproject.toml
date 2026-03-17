@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forensight"
+version = "1.0.0"
+description = "Linux Forensic Intelligence System"
+requires-python = ">=3.8"
+dependencies = [
+    "rich>=13.0.0",
+    "flask>=2.0.0",
+    "requests>=2.28.0",
+    "python-dateutil>=2.8.0",
+]
+
+[project.scripts]
+forensight = "forensight_cli:main"
+
+[tool.setuptools]
+py-modules = ["main", "server", "server_bridge", "forensight_cli"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

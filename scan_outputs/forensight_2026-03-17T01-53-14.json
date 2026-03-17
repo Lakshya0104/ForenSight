@@ -1,0 +1,1075 @@
+{
+  "scan_meta": {
+    "tool": "ForenSight",
+    "version": "1.0.0",
+    "scan_time": "2026-03-17T01:53:14.408043+00:00",
+    "target": "\\",
+    "mode": "live"
+  },
+  "os_profile": {
+    "distro": "Unknown",
+    "version": "Unknown",
+    "kernel": "Unknown",
+    "confidence": 0.0,
+    "threat_level": "NONE",
+    "offensive_packages_found": 0,
+    "evidence": [
+      "No offensive OS markers detected"
+    ]
+  },
+  "tools_detected": [
+    {
+      "name": "wct147D.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct147D.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct147D.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct2915.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct2915.tmp",
+      "size_bytes": 103278,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct2915.tmp (103278 bytes)"
+    },
+    {
+      "name": "wct2B7B.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct2B7B.tmp",
+      "size_bytes": 28442,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct2B7B.tmp (28442 bytes)"
+    },
+    {
+      "name": "wct39E3.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct39E3.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct39E3.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct47EF.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct47EF.tmp",
+      "size_bytes": 28482,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct47EF.tmp (28482 bytes)"
+    },
+    {
+      "name": "wct4C8F.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct4C8F.tmp",
+      "size_bytes": 6098,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4C8F.tmp (6098 bytes)"
+    },
+    {
+      "name": "wct4DB9.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct4DB9.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4DB9.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct4E27.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct4E27.tmp",
+      "size_bytes": 0,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4E27.tmp (0 bytes)"
+    },
+    {
+      "name": "wct520F.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct520F.tmp",
+      "size_bytes": 103283,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct520F.tmp (103283 bytes)"
+    },
+    {
+      "name": "wct5C98.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct5C98.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct5C98.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct6D7B.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct6D7B.tmp",
+      "size_bytes": 103278,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct6D7B.tmp (103278 bytes)"
+    },
+    {
+      "name": "wct6F0D.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct6F0D.tmp",
+      "size_bytes": 103283,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct6F0D.tmp (103283 bytes)"
+    },
+    {
+      "name": "wct7BA.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct7BA.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct7BA.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct7FA0.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct7FA0.tmp",
+      "size_bytes": 103290,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct7FA0.tmp (103290 bytes)"
+    },
+    {
+      "name": "wct819.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct819.tmp",
+      "size_bytes": 28442,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct819.tmp (28442 bytes)"
+    },
+    {
+      "name": "wct866A.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct866A.tmp",
+      "size_bytes": 6098,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct866A.tmp (6098 bytes)"
+    },
+    {
+      "name": "wct8DCB.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct8DCB.tmp",
+      "size_bytes": 28446,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct8DCB.tmp (28446 bytes)"
+    },
+    {
+      "name": "wct9980.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct9980.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9980.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct9B94.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct9B94.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9B94.tmp (103292 bytes)"
+    },
+    {
+      "name": "wct9D64.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wct9D64.tmp",
+      "size_bytes": 28442,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9D64.tmp (28442 bytes)"
+    },
+    {
+      "name": "wctA72B.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctA72B.tmp",
+      "size_bytes": 6138,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA72B.tmp (6138 bytes)"
+    },
+    {
+      "name": "wctA752.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctA752.tmp",
+      "size_bytes": 28442,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA752.tmp (28442 bytes)"
+    },
+    {
+      "name": "wctA77B.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctA77B.tmp",
+      "size_bytes": 28482,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA77B.tmp (28482 bytes)"
+    },
+    {
+      "name": "wctB02F.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctB02F.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctB02F.tmp (103292 bytes)"
+    },
+    {
+      "name": "wctB21D.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctB21D.tmp",
+      "size_bytes": 103290,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctB21D.tmp (103290 bytes)"
+    },
+    {
+      "name": "wctCEDC.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctCEDC.tmp",
+      "size_bytes": 103290,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctCEDC.tmp (103290 bytes)"
+    },
+    {
+      "name": "wctD46A.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctD46A.tmp",
+      "size_bytes": 103278,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctD46A.tmp (103278 bytes)"
+    },
+    {
+      "name": "wctD9DC.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctD9DC.tmp",
+      "size_bytes": 103278,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctD9DC.tmp (103278 bytes)"
+    },
+    {
+      "name": "wctDD6B.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctDD6B.tmp",
+      "size_bytes": 103292,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctDD6B.tmp (103292 bytes)"
+    },
+    {
+      "name": "wctE093.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctE093.tmp",
+      "size_bytes": 28482,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctE093.tmp (28482 bytes)"
+    },
+    {
+      "name": "wctE463.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctE463.tmp",
+      "size_bytes": 6098,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctE463.tmp (6098 bytes)"
+    },
+    {
+      "name": "wctEC7F.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctEC7F.tmp",
+      "size_bytes": 28442,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctEC7F.tmp (28442 bytes)"
+    },
+    {
+      "name": "wctEF56.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctEF56.tmp",
+      "size_bytes": 28482,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctEF56.tmp (28482 bytes)"
+    },
+    {
+      "name": "wctF377.tmp",
+      "category": "credential-access",
+      "risk": "CRITICAL",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\AppData\\Local\\Temp\\wctF377.tmp",
+      "size_bytes": 103283,
+      "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctF377.tmp (103283 bytes)"
+    },
+    {
+      "name": "Wireshark",
+      "category": "sniffing",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "C:\\Program Files\\Wireshark",
+      "size_bytes": 40960,
+      "evidence": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)"
+    },
+    {
+      "name": "Nmap",
+      "category": "recon",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "C:\\Program Files (x86)\\Nmap",
+      "size_bytes": 8192,
+      "evidence": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)"
+    },
+    {
+      "name": "nmap-7.95-3.x86_64.cpio",
+      "category": "recon",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.cpio",
+      "size_bytes": 31147924,
+      "evidence": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.cpio (31147924 bytes)"
+    },
+    {
+      "name": "nmap-7.95-3.x86_64.rpm",
+      "category": "recon",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.rpm",
+      "size_bytes": 8184912,
+      "evidence": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.rpm (8184912 bytes)"
+    },
+    {
+      "name": "nmap-7.97-setup.exe",
+      "category": "recon",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\Downloads\\nmap-7.97-setup.exe",
+      "size_bytes": 35748296,
+      "evidence": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.97-setup.exe (35748296 bytes)"
+    },
+    {
+      "name": "Wireshark-4.4.6-x64.exe",
+      "category": "sniffing",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\Downloads\\Wireshark-4.4.6-x64.exe",
+      "size_bytes": 87330024,
+      "evidence": "Binary found at \\Users\\jyoth\\Downloads\\Wireshark-4.4.6-x64.exe (87330024 bytes)"
+    },
+    {
+      "name": "Nmap - Zenmap GUI.lnk",
+      "category": "recon",
+      "risk": "HIGH",
+      "state": "installed",
+      "path": "\\Users\\jyoth\\Desktop\\Nmap - Zenmap GUI.lnk",
+      "size_bytes": 2236,
+      "evidence": "Binary found at \\Users\\jyoth\\Desktop\\Nmap - Zenmap GUI.lnk (2236 bytes)"
+    }
+  ],
+  "log_analysis": {
+    "logs_cleared": true,
+    "history_cleared": true,
+    "missing_logs": [
+      {
+        "path": "/var/log/auth.log",
+        "description": "Authentication events (SSH, sudo, login failures)"
+      },
+      {
+        "path": "/var/log/syslog",
+        "description": "General system activity"
+      },
+      {
+        "path": "/var/log/kern.log",
+        "description": "Kernel messages"
+      },
+      {
+        "path": "/var/log/messages",
+        "description": "General messages (RHEL/CentOS)"
+      },
+      {
+        "path": "/var/log/wtmp",
+        "description": "Login/logout history (binary)"
+      },
+      {
+        "path": "/var/log/btmp",
+        "description": "Failed login attempts (binary)"
+      },
+      {
+        "path": "/var/log/lastlog",
+        "description": "Last login per user (binary)"
+      },
+      {
+        "path": "/var/log/secure",
+        "description": "Security events (RHEL/CentOS)"
+      },
+      {
+        "path": "/var/log/faillog",
+        "description": "Failed authentication log"
+      },
+      {
+        "path": "/var/log/apt/history.log",
+        "description": "Package install/remove history"
+      },
+      {
+        "path": "/var/log/dpkg.log",
+        "description": "Package manager log"
+      }
+    ],
+    "wiped_logs": [],
+    "evasion_commands_found": [],
+    "suspicious_commands_found": [],
+    "failed_logins": 0,
+    "sudo_attempts": 0,
+    "ssh_connections": [],
+    "log_coverage": 0.0
+  },
+  "temporal_paradoxes": [],
+  "uefi": {
+    "usb_boot_signature": false,
+    "last_boot_device": "Unknown",
+    "boot_entries": [],
+    "firmware_evidence": "EFI vars not accessible (run as root on Linux)"
+  },
+  "lare": {
+    "timeline": {
+      "total_files_scanned": 0,
+      "suspicious_files_found": 0,
+      "suspicious_files": [],
+      "recently_modified": [],
+      "recently_accessed": [],
+      "full_timeline": []
+    },
+    "mitre_chain": [],
+    "persona": "Network Intrusion Operator",
+    "persona_confidence": 0.17,
+    "attack_events": [
+      {
+        "id": "tool-34",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Sniffing",
+        "technique": "",
+        "title": "Wireshark (active)",
+        "description": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)",
+        "evidence": "Binary found at C:\\Program Files\\Wireshark (40960 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-35",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Recon",
+        "technique": "",
+        "title": "Nmap (active)",
+        "description": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)",
+        "evidence": "Binary found at C:\\Program Files (x86)\\Nmap (8192 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-36",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Recon",
+        "technique": "",
+        "title": "nmap-7.95-3.x86_64.cpio (active)",
+        "description": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.cpio (31147924 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.cpio (31147924 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-37",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Recon",
+        "technique": "",
+        "title": "nmap-7.95-3.x86_64.rpm (active)",
+        "description": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.rpm (8184912 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.95-3.x86_64.rpm (8184912 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-38",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Recon",
+        "technique": "",
+        "title": "nmap-7.97-setup.exe (active)",
+        "description": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.97-setup.exe (35748296 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\Downloads\\nmap-7.97-setup.exe (35748296 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-39",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Sniffing",
+        "technique": "",
+        "title": "Wireshark-4.4.6-x64.exe (active)",
+        "description": "Binary found at \\Users\\jyoth\\Downloads\\Wireshark-4.4.6-x64.exe (87330024 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\Downloads\\Wireshark-4.4.6-x64.exe (87330024 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-40",
+        "type": "tool",
+        "phase": "Recon",
+        "tactic": "Recon",
+        "technique": "",
+        "title": "Nmap - Zenmap GUI.lnk (active)",
+        "description": "Binary found at \\Users\\jyoth\\Desktop\\Nmap - Zenmap GUI.lnk (2236 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\Desktop\\Nmap - Zenmap GUI.lnk (2236 bytes)",
+        "severity": "high",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-0",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct147D.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct147D.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct147D.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-1",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct2915.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct2915.tmp (103278 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct2915.tmp (103278 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-2",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct2B7B.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct2B7B.tmp (28442 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct2B7B.tmp (28442 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-3",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct39E3.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct39E3.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct39E3.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-4",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct47EF.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct47EF.tmp (28482 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct47EF.tmp (28482 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-5",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct4C8F.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4C8F.tmp (6098 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4C8F.tmp (6098 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-6",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct4DB9.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4DB9.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4DB9.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-7",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct4E27.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4E27.tmp (0 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct4E27.tmp (0 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-8",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct520F.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct520F.tmp (103283 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct520F.tmp (103283 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-9",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct5C98.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct5C98.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct5C98.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-10",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct6D7B.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct6D7B.tmp (103278 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct6D7B.tmp (103278 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-11",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct6F0D.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct6F0D.tmp (103283 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct6F0D.tmp (103283 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-12",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct7BA.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct7BA.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct7BA.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-13",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct7FA0.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct7FA0.tmp (103290 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct7FA0.tmp (103290 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-14",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct819.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct819.tmp (28442 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct819.tmp (28442 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-15",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct866A.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct866A.tmp (6098 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct866A.tmp (6098 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-16",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct8DCB.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct8DCB.tmp (28446 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct8DCB.tmp (28446 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-17",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct9980.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9980.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9980.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-18",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct9B94.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9B94.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9B94.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-19",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wct9D64.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9D64.tmp (28442 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wct9D64.tmp (28442 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-20",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctA72B.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA72B.tmp (6138 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA72B.tmp (6138 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-21",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctA752.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA752.tmp (28442 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA752.tmp (28442 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-22",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctA77B.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA77B.tmp (28482 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctA77B.tmp (28482 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-23",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctB02F.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctB02F.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctB02F.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-24",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctB21D.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctB21D.tmp (103290 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctB21D.tmp (103290 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-25",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctCEDC.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctCEDC.tmp (103290 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctCEDC.tmp (103290 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-26",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctD46A.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctD46A.tmp (103278 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctD46A.tmp (103278 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-27",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctD9DC.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctD9DC.tmp (103278 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctD9DC.tmp (103278 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-28",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctDD6B.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctDD6B.tmp (103292 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctDD6B.tmp (103292 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-29",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctE093.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctE093.tmp (28482 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctE093.tmp (28482 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-30",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctE463.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctE463.tmp (6098 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctE463.tmp (6098 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-31",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctEC7F.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctEC7F.tmp (28442 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctEC7F.tmp (28442 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-32",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctEF56.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctEF56.tmp (28482 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctEF56.tmp (28482 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      },
+      {
+        "id": "tool-33",
+        "type": "tool",
+        "phase": "Execution",
+        "tactic": "Credential-Access",
+        "technique": "",
+        "title": "wctF377.tmp (active)",
+        "description": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctF377.tmp (103283 bytes)",
+        "evidence": "Binary found at \\Users\\jyoth\\AppData\\Local\\Temp\\wctF377.tmp (103283 bytes)",
+        "severity": "critical",
+        "state": "installed",
+        "color": "#E24B4A",
+        "icon": "tool"
+      }
+    ],
+    "html_report": "C:\\Cybershield\\ForenSight\\lare_report.html",
+    "phases_hit": [
+      "Recon",
+      "Execution"
+    ],
+    "total_events": 41
+  },
+  "persona": "Network Intrusion Operator",
+  "persona_confidence": 0.17,
+  "timeline": {
+    "total_files_scanned": 0,
+    "suspicious_files_found": 0,
+    "suspicious_files": [],
+    "recently_modified": [],
+    "recently_accessed": [],
+    "full_timeline": []
+  },
+  "mitre_chain": [],
+  "evasion_score": 40,
+  "evasion_breakdown": {
+    "log_wipe": 25,
+    "history_clear": 15,
+    "timestamp_manipulation": 0,
+    "anti_forensic_tools": 0,
+    "anonymization_tools": 0,
+    "uefi_boot_anomaly": 0,
+    "offensive_os": 0
+  },
+  "narrative_technical": "Active offensive binaries confirmed at expected filesystem paths: wct147D.tmp, wct2915.tmp, wct2B7B.tmp, wct39E3.tmp, wct47EF.tmp, wct4C8F.tmp, wct4DB9.tmp, wct4E27.tmp, wct520F.tmp, wct5C98.tmp, wct6D7B.tmp, wct6F0D.tmp, wct7BA.tmp, wct7FA0.tmp, wct819.tmp, wct866A.tmp, wct8DCB.tmp, wct9980.tmp, wct9B94.tmp, wct9D64.tmp, wctA72B.tmp, wctA752.tmp, wctA77B.tmp, wctB02F.tmp, wctB21D.tmp, wctCEDC.tmp, wctD46A.tmp, wctD9DC.tmp, wctDD6B.tmp, wctE093.tmp, wctE463.tmp, wctEC7F.tmp, wctEF56.tmp, wctF377.tmp, Wireshark, Nmap, nmap-7.95-3.x86_64.cpio, nmap-7.95-3.x86_64.rpm, nmap-7.97-setup.exe, Wireshark-4.4.6-x64.exe, Nmap - Zenmap GUI.lnk. CRITICAL-risk tools identified: wct147D.tmp, wct2915.tmp, wct2B7B.tmp, wct39E3.tmp, wct47EF.tmp, wct4C8F.tmp, wct4DB9.tmp, wct4E27.tmp, wct520F.tmp, wct5C98.tmp, wct6D7B.tmp, wct6F0D.tmp, wct7BA.tmp, wct7FA0.tmp, wct819.tmp, wct866A.tmp, wct8DCB.tmp, wct9980.tmp, wct9B94.tmp, wct9D64.tmp, wctA72B.tmp, wctA752.tmp, wctA77B.tmp, wctB02F.tmp, wctB21D.tmp, wctCEDC.tmp, wctD46A.tmp, wctD9DC.tmp, wctDD6B.tmp, wctE093.tmp, wctE463.tmp, wctEC7F.tmp, wctEF56.tmp, wctF377.tmp. 11 critical system log files were absent or zero-byte (including auth.log, syslog, wtmp), consistent with deliberate log destruction. ",
+  "narrative_plain": "Hacking tools were found actively installed on the machine: wct147D.tmp, wct2915.tmp, wct2B7B.tmp, wct39E3.tmp, wct47EF.tmp, wct4C8F.tmp, wct4DB9.tmp, wct4E27.tmp, wct520F.tmp, wct5C98.tmp, wct6D7B.tmp, wct6F0D.tmp, wct7BA.tmp, wct7FA0.tmp, wct819.tmp, wct866A.tmp, wct8DCB.tmp, wct9980.tmp, wct9B94.tmp, wct9D64.tmp, wctA72B.tmp, wctA752.tmp, wctA77B.tmp, wctB02F.tmp, wctB21D.tmp, wctCEDC.tmp, wctD46A.tmp, wctD9DC.tmp, wctDD6B.tmp, wctE093.tmp, wctE463.tmp, wctEC7F.tmp, wctEF56.tmp, wctF377.tmp, Wireshark, Nmap, nmap-7.95-3.x86_64.cpio, nmap-7.95-3.x86_64.rpm, nmap-7.97-setup.exe, Wireshark-4.4.6-x64.exe, Nmap - Zenmap GUI.lnk. The machine's activity records \u2014 the logs that would normally show everything that happened \u2014 were deliberately wiped. 11 critical log files were missing or emptied. This is not an accident. It indicates a deliberate attempt to destroy evidence before the machine was seized.",
+  "narrative_source": "template",
+  "verdict": "MEDIUM RISK \u2014 Suspicious activity detected. Further forensic investigation recommended."
+}
