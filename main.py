@@ -607,29 +607,62 @@ def print_results(result: dict, elapsed: float, verbose: bool = False):
     print_verdict(result, elapsed)
 
 
+
+
 def run_scan(target: str, output_path: str = "forensight_report.json",
-             demo: bool = False, verbose: bool = False, update_db: bool = False):
+             demo: bool = False, verbose: bool = False,
+             update_db: bool = False, serve: bool = False):
     print_banner()
     start = time.time()
 
+    # ── Optional: update tool DB ──────────────────────────────
     if update_db:
         console.print(Panel(
-        "[bold green]Refreshing tool database from Kali apt repos...[/bold green]\n"
-        "[dim]Querying 21 Kali meta-packages. This takes ~30 seconds.[/dim]",
-        border_style="green", padding=(0, 2)
-    ))
-    from src.core.tool_db import refresh_tool_db
-    with console.status("[green]Pulling from apt-cache...[/green]"):
-        db = refresh_tool_db(verbose=False)
-    console.print(Panel(
-        f"[bold green]✓ Tool DB updated[/bold green]\n"
-        f"[dim]  Tools loaded:   [/dim][bold]{db['tool_count']}[/bold]\n"
-        f"[dim]  Categories hit: [/dim][bold]{db['categories_hit']}[/bold]\n"
-        f"[dim]  Source:         [/dim][bold]{db['source']}[/bold]\n"
-        f"[dim]  Saved to:       [/dim][bold]tool_db.json[/bold]",
-        border_style="green", padding=(0, 2)
-    ))
-    console.print()
+            "[bold green]Refreshing tool database from Kali apt repos...[/bold green]\n"
+            "[dim]Querying 21 Kali meta-packages. This takes ~30 seconds.[/dim]",
+            border_style="green", padding=(0, 2)
+        ))
+        with console.status("[green]Pulling from apt-cache...[/green]"):
+            db = refresh_tool_db(verbose=False)
+        console.print(Panel(
+            f"[bold green]✓ Tool DB updated[/bold green]\n"
+            f"[dim]  Tools loaded:   [/dim][bold]{db['tool_count']}[/bold]\n"
+            f"[dim]  Categories hit: [/dim][bold]{db['categories_hit']}[/bold]\n"
+            f"[dim]  Source:         [/dim][bold]{db['source']}[/bold]\n"
+            f"[dim]  Saved to:       [/dim][bold]tool_db.json[/bold]",
+            border_style="green", padding=(0, 2)
+        ))
+        console.print()
+
+    # ── Optional: start live dashboard ───────────────────────
+    _bridge = None
+    if serve:
+        try:
+            import server_bridge as _bridge
+            ok = _bridge.start_server(port=5000, open_browser=True)
+            if ok:
+                _bridge.push_start(target)
+                console.print(Panel(
+                    "[bold green]Dashboard live →[/bold green] "
+                    "[underline]http://localhost:5000[/underline]\n"
+                    "[dim]Open in browser. Each module streams in as it completes.[/dim]",
+                    border_style="green", padding=(0, 2)
+                ))
+                console.print()
+            else:
+                _bridge = None
+        except ImportError:
+            console.print("[yellow]Warning: Flask not installed — run: pip install flask[/yellow]")
+            _bridge = None
+
+    # ── Demo mode banner ──────────────────────────────────────
+    if demo:
+        console.print(Panel(
+            "[bold yellow]DEMO MODE[/bold yellow] — Running with simulated Tails OS attack scenario\n"
+            "[dim]All findings are representative of a real offensive Linux investigation.[/dim]",
+            border_style="yellow", padding=(0, 2)
+        ))
+        console.print()
 
     result = {
         "scan_meta": {
@@ -671,18 +704,25 @@ def run_scan(target: str, output_path: str = "forensight_report.json",
             try:
                 val = fn()
                 result[key] = val
+                # ── Push live update to dashboard ─────────────
+                if _bridge:
+                    try:
+                        _bridge.push_module(key, val)
+                    except Exception:
+                        pass
             except Exception as e:
                 result[key] = {"error": str(e)}
                 console.print(f"  [red]✗ Error in {key}: {e}[/red]")
             progress.advance(task)
 
-    # Extract LARE sub-results into top-level keys
+    # ── Extract LARE sub-results into top-level keys ──────────
     lare = result.get("lare", {})
     result["persona"]            = lare.get("persona", "Unknown")
     result["persona_confidence"] = lare.get("persona_confidence", 0.0)
     result["timeline"]           = lare.get("timeline", {})
     result["mitre_chain"]        = lare.get("mitre_chain", [])
 
+    # ── Post-scan calculations ────────────────────────────────
     result["evasion_score"], result["evasion_breakdown"] = calculate_evasion_score(result)
 
     narrative                     = generate_narrative(result)
@@ -692,20 +732,30 @@ def run_scan(target: str, output_path: str = "forensight_report.json",
 
     result["verdict"] = generate_verdict(result["evasion_score"])
 
+    # ── Push completed result to dashboard ────────────────────
+    if _bridge:
+        try:
+            _bridge.push_complete(result)
+        except Exception:
+            pass
+
     elapsed = time.time() - start
     console.print()
     print_results(result, elapsed, verbose=verbose)
     export_json(result, output_path)
 
+    # ── Final summary panel ───────────────────────────────────
     html_path = lare.get("html_report", "")
-    console.print(Panel(
+    final_msg = (
         f"[bold green]✓ JSON report  [/bold green] → "
         f"[underline]{os.path.abspath(output_path)}[/underline]\n"
         + (f"[bold green]✓ LARE timeline[/bold green] → "
            f"[underline]{html_path}[/underline]\n" if html_path else "")
-        + f"[dim]Scan completed in {elapsed:.2f}s[/dim]",
-        border_style="green", padding=(0, 2)
-    ))
+        + (f"[bold green]✓ Dashboard    [/bold green] → "
+           f"[underline]http://localhost:5000[/underline]\n" if _bridge else "")
+        + f"[dim]Scan completed in {elapsed:.2f}s[/dim]"
+    )
+    console.print(Panel(final_msg, border_style="green", padding=(0, 2)))
     console.print()
     return result
 
@@ -766,19 +816,21 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
-            "  python main.py /                           # scan live system\n"
-            "  python main.py /mnt/disk                   # scan mounted disk image\n"
-            "  python main.py / --output report.json      # custom output path\n"
-            "  python main.py / --demo                    # run demo scenario\n"
-            "  python main.py / --verbose                 # show full paradox table\n"
+            "  sudo python3 main.py /                            # scan live system\n"
+            "  sudo python3 main.py / --serve                    # scan + live dashboard\n"
+            "  sudo python3 main.py / --output report.json       # custom output path\n"
+            "  sudo python3 main.py / --verbose                  # full paradox table\n"
+            "  sudo python3 main.py / --update-db                # refresh tool DB\n"
+            "  sudo python3 main.py / --serve --update-db        # update DB + dashboard\n"
         )
     )
-    parser.add_argument("target",    help="Target path (/ for live system, or mounted disk image path)")
-    parser.add_argument("--output",  default="forensight_report.json", help="Output JSON report path")
-    parser.add_argument("--demo",    action="store_true", help="Run demo with simulated Tails scenario")
-    
-    parser.add_argument("--verbose", action="store_true", help="Show full paradox table and extended output")
-    parser.add_argument("--update-db", action="store_true",
-                    help="Refresh tool database from Kali apt repos (~30s, run once)")
+    parser.add_argument("target",      help="Target path (/ for live system, or mounted disk image path)")
+    parser.add_argument("--output",    default="forensight_report.json", help="Output JSON report path")
+    parser.add_argument("--demo",      action="store_true", help="Run demo with simulated Tails scenario")
+    parser.add_argument("--verbose",   action="store_true", help="Show full paradox table and extended output")
+    parser.add_argument("--update-db", dest="update_db", action="store_true",
+                        help="Refresh tool database from Kali apt repos (~30s, run once)")
+    parser.add_argument("--serve",     action="store_true",
+                        help="Start live dashboard at localhost:5000")
     args = parser.parse_args()
-run_scan(args.target, args.output, args.demo, args.verbose, args.update_db)
+    run_scan(args.target, args.output, args.demo, args.verbose, args.update_db, args.serve)

@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForenSight — Forensic Intelligence Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+        :root {
+            /* Shared / Dark Theme */
+            --black:      #050a05;
+            --panel:      #0a140a;
+            --panel2:     #0d1a0d;
+            --border:     rgba(0,255,100,0.12);
+            --border2:    rgba(0,255,100,0.25);
+            --green:      #00ff65;
+            --green-glow: #00ff65;
+            --green-dim:  rgba(0,255,100,0.08);
+            --green-mid:  rgba(0,255,100,0.18);
+            --white:      #f0fff4;
+            --text-dim:   rgba(240,255,244,0.5);
+            --text-faint: rgba(240,255,244,0.25);
+            --bg-grid:    rgba(0,255,100,0.07);
+            --bg-scan:    rgba(0,255,100,0.013);
+            --footer-bg:  #030803;
+
+            --badge-amber-bg: rgba(255,170,0,0.06);
+            --badge-red-bg: rgba(255,45,85,0.05);
+            --card-amber-bg: rgba(255,170,0,0.04);
+            --card-red-bg: rgba(255,45,85,0.04);
+            --logo-foren: #f0fff4;
+            --logo-sight: #00ff65;
+            --m4-lbl-bg:  #050a05;
+
+            --font:       'Inter', sans-serif;
+        }
+
+        /* Light Theme Redesigned for Maximum Cleverness */
+        [data-theme="light"] {
+            --black:      #f5f8f6; 
+            --panel:      #ffffff;
+            --panel2:     #f0f4f1;
+            --border:     rgba(0,180,80,0.2);
+            --border2:    rgba(0,180,80,0.4);
+            --green:      #00b34d; 
+            --green-glow: transparent; /* No muddy green text shadows on dark text */
+            --green-dim:  rgba(0,180,80,0.06);
+            --green-mid:  rgba(0,180,80,0.15);
+            --white:      #0a1a10; /* very crisp dark grey/black for readability */
+            --text-dim:   rgba(10,26,16,0.65);
+            --text-faint: rgba(10,26,16,0.45);
+            --bg-grid:    rgba(0,0,0,0.04); /* grey background dots instead of green */
+            --bg-scan:    rgba(0,0,0,0.015);
+            --footer-bg:  #e9ecea;
+            
+            --logo-foren: #0a1a10;
+            --logo-sight: #00b34d;
+            --m4-lbl-bg:  #f5f8f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html { 
+            background: var(--black); 
+            color: var(--white); 
+            font-family: var(--font); 
+            scroll-behavior: smooth; 
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- Background Layers --- */
+        .bg-grid { 
+            background-image: radial-gradient(circle, var(--bg-grid) 1px, transparent 1px);
+            background-size: 28px 28px;
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            transition: background-image 0.4s ease;
+        }
+        .bg-scanlines { 
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, var(--bg-scan) 3px, var(--bg-scan) 4px);
+            transition: background 0.4s ease;
+        }
+        
+        .content-layer { position: relative; z-index: 10; }
+
+        /* --- Header --- */
+        header { 
+            position: sticky; top: 0; height: 64px; 
+            background: var(--black); 
+            border-bottom: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 48px; z-index: 100;
+            opacity: 0.95; 
+            transition: background 0.4s ease, border-color 0.4s ease;
+        }
+        .logo { 
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.6rem; 
+            letter-spacing: 3px; display: flex; text-transform: uppercase; 
+            animation: logoGlow 3s ease-in-out infinite; 
+        }
+        .logo-foren { color: var(--logo-foren); transition: color 0.4s ease; }
+        .logo-sight { color: var(--logo-sight); transition: color 0.4s ease; }
+        
+        @keyframes logoGlow {
+            0%, 100%  { text-shadow: 0 0 30px rgba(0,255,100,0.5), 0 0 60px rgba(0,255,100,0.2); }
+            50%       { text-shadow: 0 0 50px rgba(0,255,100,0.8), 0 0 100px rgba(0,255,100,0.3); }
+        }
+        
+        /* Disable breathing neon logo in light mode as it looks messy */
+        [data-theme="light"] .logo { animation: none; text-shadow: none; }
+        
+        /* Theme Toggle styles */
+        .header-controls { display: flex; align-items: center; gap: 24px; }
+        .header-version {
+            font-family: 'Inter', sans-serif; font-weight: 400; font-size: 0.65rem; 
+            color: var(--text-dim); letter-spacing: 2px;
+        }
+        
+        .theme-toggle {
+            background: var(--green-dim);
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 6px 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 8px rgba(0,255,100,0.1);
+        }
+        .theme-toggle:hover {
+            background: var(--green);
+            color: var(--panel);
+            box-shadow: 0 0 15px rgba(0,255,100,0.4);
+        }
+        [data-theme="light"] .theme-toggle {
+            box-shadow: none;
+        }
+        [data-theme="light"] .theme-toggle:hover {
+            background: var(--green);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,180,80,0.2);
+        }
+
+        /* --- Global Scroll Animation Classes --- */
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-left { opacity: 0; transform: translateX(-28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+        .mod-header-odd { opacity: 0; transform: translateX(-30px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        .mod-header-odd.visible { opacity: 1; transform: translateX(0); }
+        .mod-header-even { opacity: 0; transform: translateX(30px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        .mod-header-even.visible { opacity: 1; transform: translateX(0); }
+
+        /* --- Empty State --- */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            border: 1px solid var(--border);
+            background: var(--green-dim);
+            text-align: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .empty-icon { font-size: 2rem; color: rgba(0,255,100,0.4); }
+        [data-theme="light"] .empty-icon { color: rgba(0,180,80,0.4); }
+        .empty-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+        .empty-desc { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--text-faint); letter-spacing: 1px; }
+
+        /* --- Section 1: Hero --- */
+        .hero { 
+            min-height: calc(100vh - 64px); display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 0 48px; 
+            position: relative; text-align: center; padding-top: 40px;
+        }
+
+        .hero-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; }
+
+        .h-anim-1 { animation: heroIn 0.9s ease-out forwards; opacity: 0; transform: translateY(30px); }
+        .h-anim-2 { animation: heroIn 0.9s ease-out forwards 0.2s; opacity: 0; transform: translateY(30px); }
+        .h-anim-3 { animation: heroIn 0.9s ease-out forwards 0.4s; opacity: 0; transform: translateY(30px); }
+        .h-anim-4 { animation: heroIn 0.9s ease-out forwards 0.8s; opacity: 0; transform: translateY(30px); }
+        @keyframes heroIn { to { opacity: 1; transform: translateY(0); } }
+
+        .hero-title-container { position: relative; display: inline-block; margin-bottom: 28px; }
+        .hero h1 { 
+            font-weight: 900; font-size: clamp(56px, 8vw, 110px); color: var(--white); 
+            letter-spacing: -2px; line-height: 1.02; margin: 0; 
+            text-shadow: 0 0 60px rgba(0,255,100,0.5), 0 0 100px rgba(0,255,100,0.2); 
+            position: relative; z-index: 10;
+        }
+        [data-theme="light"] .hero h1 { text-shadow: none; } /* Crisp pure text in light mode */
+
+        .hero p { 
+            font-weight: 400; font-size: 1.15rem; color: var(--text-dim); 
+            line-height: 1.95; margin: 0; max-width: 540px; 
+        }
+        
+        .hero-tags { display: flex; gap: 32px; margin-top: 36px; justify-content: center; align-items: center; flex-wrap: wrap; }
+        .hero-tag { 
+            font-weight: 700; font-size: 0.85rem; letter-spacing: 1.5px; color: var(--green); 
+            text-shadow: 0 0 15px rgba(0,255,100,0.8);
+            border-bottom: 1px solid rgba(0,255,100,0.4); padding: 4px 0 6px; 
+            transition: all 0.2s ease; cursor: default;
+        }
+        .hero-tag:hover { color: #ffffff; text-shadow: 0 0 25px rgba(0,255,100,0.9); border-bottom: 1px solid rgba(0,255,100,0.9); }
+        
+        /* Light mode tag styles: remove muddy glow, use clean block styles */
+        [data-theme="light"] .hero-tag { 
+            text-shadow: none; 
+            border-bottom: 2px solid var(--green-dim); 
+            background: var(--green-dim);
+            padding: 6px 16px 8px;
+            border-radius: 4px;
+        }
+        [data-theme="light"] .hero-tag:hover { 
+            color: #ffffff; 
+            background: var(--green); 
+            border-bottom-color: var(--green); 
+            box-shadow: 0 4px 12px rgba(0,180,80,0.2);
+        }
+        
+        /* Changed from position:absolute to margin-top to flow perfectly below the tags */
+        .scroll-ind { margin-top: 64px; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 10; position: relative; }
+        .scroll-txt { font-weight: 500; font-size: 0.62rem; letter-spacing: 3px; color: var(--green); opacity: 0.6; }
+        .scroll-line { width: 1px; height: 48px; background: rgba(0,255,100,0.15); position: relative; overflow: hidden; }
+        [data-theme="light"] .scroll-line { background: rgba(0,180,80,0.2); }
+        .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: var(--green); animation: scrollDrop 2s infinite ease-in-out; }
+        @keyframes scrollDrop { 0% { transform: translateY(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(200%); opacity: 0; } }
+
+        .scan-line {
+            position: absolute; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,255,100,0.8), transparent);
+            box-shadow: 0 0 10px var(--green);
+            animation: scanDown 2.5s ease-out 0.5s forwards;
+            opacity: 0; z-index: 5; pointer-events: none;
+        }
+        [data-theme="light"] .scan-line { opacity: 0 !important; animation: none; } /* Disabled in light mode for cleanliness */
+        @keyframes scanDown {
+            0%   { top: 0%;   opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* --- Visual Separator --- */
+        .separator { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--green), transparent); position: relative; overflow: hidden;}
+        .sep-glow { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); animation: sweep 3s infinite linear; opacity: 0.6; }
+        [data-theme="light"] .sep-glow { background: linear-gradient(90deg, transparent, rgba(0,0,0,0.3), transparent); }
+        @keyframes sweep { to { left: 200%; } }
+        .sep-text { font-weight: 700; font-size: 0.85rem; letter-spacing: 6px; color: var(--green); opacity: 0.7; text-align: center; margin-top: 48px; margin-bottom: 24px; text-transform: uppercase;}
+
+        /* --- Dashboard Modules Global Rules --- */
+        .module { max-width: 1200px; margin: 0 auto; padding: 100px 48px; display: flex; flex-direction: column; }
+        .module.odd { align-items: flex-start; text-align: left; }
+        .module.even { align-items: flex-end; text-align: right; }
+        
+        .section-divider-animated {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            width: 0%;
+            transition: width 1.2s ease;
+            margin: 0 auto;
+        }
+        .section-divider-animated.visible { width: 100%; }
+        
+        .mod-label { font-weight: 700; font-size: 0.85rem; letter-spacing: 4px; color: var(--green); text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .mod-title { font-weight: 800; font-size: clamp(32px, 3.5vw, 52px); color: var(--white); line-height: 1.15; margin: 0; }
+        .mod-desc { font-weight: 400; font-size: 1rem; color: var(--text-dim); max-width: 560px; line-height: 1.8; margin-top: 16px; margin-bottom: 40px; }
+        .module.odd .mod-desc { margin-left: 0; margin-right: auto; }
+        .module.even .mod-desc { margin-left: auto; margin-right: 0; }
+        
+        .module .mod-content { width: 100%; text-align: left; }
+
+        /* Generic Card Styling */
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 32px; border-radius: 0; transition: background 0.4s ease, border-color 0.4s ease; }
+        [data-theme="light"] .card { box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+
+        /* --- M1: OS Detection --- */
+        .m1-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .m1-os-name { font-weight: 900; font-size: 2.5rem; color: var(--white); margin-bottom: 4px; line-height: 1; }
+        .m1-os-details { font-weight: 500; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 24px; }
+        .badge-amber { font-weight: 700; font-size: 0.75rem; letter-spacing: 2px; color: #cc8800; border: 1px solid rgba(204,136,0,0.5); background: var(--badge-amber-bg); padding: 8px 20px; display: inline-block; margin-bottom: 24px; }
+        [data-theme="dark"] .badge-amber { color: #ffaa00; border-color: rgba(255,170,0,0.5); }
+        .m1-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .m1-tag { font-weight: 500; font-size: 0.68rem; color: var(--green); border: 1px solid var(--border); padding: 3px 10px; }
+        
+        .m1-row { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; transition: border-color 0.4s ease; }
+        .m1-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+        .m1-row-title { font-weight: 700; font-size: 1rem; color: var(--white); }
+        .m1-row-desc { font-weight: 400; font-size: 0.88rem; color: var(--text-dim); margin-top: 6px; }
+
+        /* --- M2: Tool Scanner --- */
+        .m2-layer { background: var(--panel); border: 1px solid var(--border); padding: 24px 28px; display: flex; align-items: center; gap: 32px; margin-bottom: 16px; transition: background 0.4s ease, border-color 0.4s ease; }
+        [data-theme="light"] .m2-layer { box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .m2-layer.green { border-left: 3px solid var(--green); }
+        .m2-layer.amber { border-left: 3px solid #ffaa00; }
+        .m2-layer.red { border-left: 3px solid #ff2d55; }
+        .m2-num { font-weight: 900; font-size: 3rem; color: rgba(0,255,100,0.2); line-height: 1; }
+        [data-theme="light"] .m2-num { color: rgba(0,180,80,0.15); }
+        .m2-text { flex-grow: 1; }
+        .m2-title { font-weight: 700; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
+        .m2-desc { font-weight: 400; font-size: 0.88rem; color: var(--text-dim); }
+        
+        .stat-badge { font-weight: 700; font-size: 0.65rem; letter-spacing: 1.5px; border: 1px solid; padding: 4px 10px; text-transform: uppercase; }
+        .stat-badge.green { color: var(--green); border-color: var(--green-mid); background: var(--green-dim); }
+        .stat-badge.amber { color: #cc8800; border-color: rgba(204,136,0,0.5); background: var(--badge-amber-bg); }
+        .stat-badge.red { color: #ee2244; border-color: rgba(238,34,68,0.5); background: var(--badge-red-bg); }
+        [data-theme="dark"] .stat-badge.amber { color: #ffaa00; border-color: rgba(255,170,0,0.5); }
+        [data-theme="dark"] .stat-badge.red { color: #ff2d55; border-color: rgba(255,45,85,0.5); }
+
+        .m2-table { width: 100%; border-collapse: collapse; margin-top: 32px; background: var(--panel); border: 1px solid var(--border); transition: background 0.4s ease, border-color 0.4s ease; }
+        .m2-table th { font-weight: 600; font-size: 0.6rem; letter-spacing: 2px; color: var(--text-faint); padding: 14px 20px; text-transform: uppercase; border-bottom: 2px solid var(--border); text-align: left;}
+        .m2-table td { font-size: 0.8rem; padding: 16px 20px; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+        .m2-table td.m2-t-title { color: var(--white); font-weight: 600; }
+        .m2-table tr:last-child td { border-bottom: none; }
+
+        /* --- M3: LARE --- */
+        .m3-part-a { margin-bottom: 32px; }
+        .m3-label { font-weight: 700; font-size: 0.65rem; letter-spacing: 3px; color: var(--green); margin-bottom: 16px; display: block; margin-top: -12px; opacity: 0.7;}
+        .m3-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+        .m3-phase { font-weight: 600; font-size: 0.8rem; padding: 8px 16px; border-radius: 2px; color: var(--text-faint); border: 1px solid var(--border); }
+        .m3-phase.hit { color: var(--black); font-weight: 700; }
+        [data-theme="dark"] .m3-phase.hit { color: #fff; }
+        .m3-phase.hit-1 { background: rgba(0, 220, 255, 0.2); border-color: rgba(0, 220, 255, 0.5); color: #0088aa; }
+        .m3-phase.hit-2 { background: rgba(180, 0, 255, 0.2); border-color: rgba(180, 0, 255, 0.5); color: #7700aa; }
+        .m3-phase.hit-3 { background: rgba(255, 170, 0, 0.2); border-color: rgba(255, 170, 0, 0.5); color: #aa7700; }
+        .m3-phase.hit-4 { background: rgba(255, 45, 85, 0.2); border-color: rgba(255, 45, 85, 0.5); color: #cc1133; }
+        .m3-phase.hit-5 { background: var(--green-mid); border-color: var(--green); color: var(--green); }
+        
+        [data-theme="dark"] .m3-phase.hit-1 { color: #00dcff; }
+        [data-theme="dark"] .m3-phase.hit-2 { color: #b400ff; }
+        [data-theme="dark"] .m3-phase.hit-3 { color: #ffaa00; }
+        [data-theme="dark"] .m3-phase.hit-4 { color: #ff2d55; }
+        
+        .m3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .m3-pers { font-weight: 800; font-size: 1.4rem; color: var(--white); margin-bottom: 12px; }
+        .m3-conf-lbl { font-weight: 700; font-size: 0.6rem; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 4px; display: block; }
+        .m3-conf-bar { width: 100%; height: 4px; background: var(--border); margin-bottom: 16px; }
+        .m3-conf-fill { width: 87%; height: 100%; background: var(--green); }
+        .m3-desc { font-weight: 400; font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; border-left: 2px solid var(--border2); padding-left: 12px; margin-bottom: 16px; }
+        
+        .m3-tl-event { display: flex; gap: 16px; margin-bottom: 16px; position: relative; }
+        .m3-tl-event::before { content: ''; position: absolute; left: 3px; top: 12px; bottom: -20px; width: 1px; background: var(--border); }
+        .m3-tl-event:last-child::before { display: none; }
+        .m3-dot { width: 8px; height: 8px; border-radius: 50%; min-width: 8px; margin-top: 4px; position: relative; z-index: 2; }
+        .m3-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .m3-dot.amber { background: #ffaa00; box-shadow: 0 0 6px #ffaa00; }
+        .m3-dot.red { background: #ff2d55; box-shadow: 0 0 6px #ff2d55; }
+        .m3-tl-ts { font-weight: 400; font-size: 0.7rem; color: var(--text-faint); min-width: 60px; line-height: 1.4;}
+        .m3-tl-doc { font-weight: 500; font-size: 0.85rem; color: var(--white); line-height: 1.3;}
+        .m3-tl-src { font-weight: 400; font-size: 0.62rem; color: var(--text-faint); display: block; margin-top: 4px;}
+
+        /* --- M4: Temporal Paradox --- */
+        .m4-top { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+        .m4-box { background: var(--panel); border: 1px solid var(--border); padding: 20px 24px; text-align: center; }
+        .m4-box.hl { border-color: rgba(0,255,100,0.5); }
+        [data-theme="light"] .m4-box.hl { border-color: rgba(0,180,80,0.4); }
+        .m4-b-lbl { font-weight: 600; font-size: 0.65rem; letter-spacing: 2px; color: var(--green); opacity: 0.7; display: block; margin-bottom: 8px; }
+        .m4-b-val { font-weight: 700; font-size: 1rem; color: var(--white); }
+        .m4-b-note { font-weight: 400; font-size: 0.75rem; color: var(--text-faint); margin-top: 8px; white-space: pre-line;}
+        
+        .m4-rule-area { text-align: center; margin-bottom: 48px; position: relative; padding: 24px 0; }
+        .m4-rule-line { position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--border); }
+        .m4-rule-lbl { position: absolute; top: -7px; left: 50%; transform: translateX(-50%); background: var(--m4-lbl-bg); padding: 0 16px; font-weight: 600; font-size: 0.6rem; letter-spacing: 2px; color: var(--green); transition: background 0.4s ease; }
+        .m4-rule-math { font-weight: 800; font-size: 2rem; color: var(--white); margin: 0; }
+        .m4-rule-sub { font-weight: 400; font-size: 0.9rem; color: var(--green); opacity: 0.8; margin-top: 8px; }
+
+        .m4-vcard { background: var(--card-amber-bg); border: 1px solid rgba(204,136,0,0.3); border-top: 2px solid #cc8800; padding: 24px; margin-bottom: 16px; text-align: left; transition: background 0.4s ease, border-color 0.4s ease; }
+        [data-theme="dark"] .m4-vcard { border-color: rgba(255,170,0,0.2); border-top-color: #ffaa00; }
+        .m4-vc-file { font-weight: 700; font-size: 1rem; color: var(--white); margin-bottom: 4px; font-family: monospace; }
+        .m4-vc-viol { font-weight: 500; font-size: 0.85rem; color: #cc8800; margin-bottom: 16px; }
+        [data-theme="dark"] .m4-vc-viol { color: #ffaa00; }
+        .m4-ts-grid { display: grid; grid-template-columns: 60px 1fr; gap: 8px 16px; font-family: monospace; font-size: 0.85rem; }
+        .m4-ts-lbl { color: var(--text-faint); }
+        .m4-ts-val { color: var(--text-dim); }
+        .m4-ts-val.err { color: #ee2244; font-weight: 700; font-family: var(--font); }
+        [data-theme="dark"] .m4-ts-val.err { color: #ff2d55; }
+        .m4-err-tag { font-size: 0.7rem; margin-left: 8px; }
+        .m4-vc-court { font-weight: 700; font-size: 0.7rem; letter-spacing: 2px; color: #ee2244; border-top: 1px solid rgba(238,34,68,0.2); padding-top: 10px; margin-top: 10px; }
+        [data-theme="dark"] .m4-vc-court { color: #ff2d55; border-top-color: rgba(255,45,85,0.2); }
+
+        /* --- M5: Evasion Score --- */
+        .m5-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .m5-left { text-align: center; }
+        .m5-score { font-weight: 900; font-size: 8rem; color: var(--white); text-shadow: 0 0 40px rgba(238,34,68,0.4); line-height: 1; margin: 0; }
+        [data-theme="dark"] .m5-score { text-shadow: 0 0 40px rgba(255,45,85,0.4); }
+        [data-theme="light"] .m5-score { text-shadow: none; }
+        .m5-max { font-weight: 400; font-size: 1.2rem; color: var(--text-faint); margin-top: -10px; display: block; margin-bottom: 24px;}
+        .m5-bar-bg { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+        .m5-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), #ffaa00, #ff2d55); width: 0%; transition: width 2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .m5-verdict { font-weight: 500; font-size: 0.9rem; color: var(--text-dim); margin: 0; }
+        
+        .m5-sig { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .m5-sig:first-child { border-top: 1px solid var(--border); }
+        .m5-sig-lbl { font-weight: 500; font-size: 0.9rem; color: var(--white); }
+        .m5-sig-pts { font-weight: 700; font-size: 0.9rem; color: #cc8800; }
+        [data-theme="dark"] .m5-sig-pts { color: #ffaa00; }
+        .m5-tot { display: flex; justify-content: space-between; padding-top: 16px; margin-top: 8px; border-top: 1px solid var(--border2); font-weight: 700; color: var(--white); font-size: 1.1rem;}
+
+        /* --- M6: UEFI --- */
+        .m6-top { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 24px; margin-bottom: 40px; }
+        .m6-col h4 { font-weight: 700; font-size: 0.9rem; color: var(--white); margin-bottom: 12px; }
+        .m6-col.right h4 { color: var(--green); }
+        .m6-col ul { list-style: none; }
+        .m6-col li { font-weight: 400; font-size: 0.8rem; color: var(--text-faint); line-height: 1.8; }
+        .m6-col.right li { color: var(--green); opacity: 0.8; }
+        .m6-vs { font-weight: 800; font-size: 2rem; color: var(--green); opacity: 0.3; text-align: center; align-self: center; }
+
+        .m6-card { background: var(--card-red-bg); border: 1px solid rgba(238,34,68,0.2); border-top: 2px solid #ee2244; padding: 24px; margin-bottom: 16px; position: relative; text-align: left; transition: background 0.4s ease, border-color 0.4s ease;}
+        [data-theme="dark"] .m6-card { border-color: rgba(255,45,85,0.18); border-top-color: #ff2d55; }
+        .m6-alert { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .m6-dot { width: 8px; height: 8px; border-radius: 50%; background: #ee2244; box-shadow: 0 0 10px #ee2244; animation: blink-red 1.5s infinite; }
+        [data-theme="dark"] .m6-dot { background: #ff2d55; box-shadow: 0 0 10px #ff2d55; }
+        @keyframes blink-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .m6-warn-lbl { font-weight: 700; font-size: 0.62rem; letter-spacing: 2px; color: #ee2244; }
+        [data-theme="dark"] .m6-warn-lbl { color: #ff2d55; }
+        .m6-hw { font-weight: 700; font-size: 1.1rem; color: var(--white); margin-bottom: 4px; }
+        .m6-vid { font-weight: 400; font-size: 0.78rem; color: #0088cc; font-family: monospace; margin-bottom: 4px; }
+        [data-theme="dark"] .m6-vid { color: rgba(0,220,255,0.7); }
+        .m6-ts { font-weight: 400; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 12px; }
+        .m6-firm-note { font-weight: 400; font-size: 0.8rem; color: var(--text-faint); border-left: 2px solid rgba(238,34,68,0.3); padding-left: 10px; margin-top: 8px; }
+        [data-theme="dark"] .m6-firm-note { border-left-color: rgba(255,45,85,0.3); }
+        .m6-court { font-weight: 700; font-size: 0.65rem; letter-spacing: 2px; color: #ee2244; margin-top: 16px; }
+        [data-theme="dark"] .m6-court { color: #ff2d55; }
+
+        .m6-smart { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+        .m6-s-box { background: var(--panel); border: 1px solid var(--border); padding: 16px; text-align: center; }
+        .m6-s-val { font-weight: 800; font-size: 1.8rem; color: #0088cc; margin-bottom: 4px; line-height: 1; }
+        [data-theme="dark"] .m6-s-val { color: rgba(0,220,255,0.8); }
+        .m6-s-lbl { font-weight: 600; font-size: 0.6rem; letter-spacing: 2px; color: var(--text-dim); }
+        .m6-global-note { font-weight: 500; font-size: 0.85rem; color: #cc8800; border-left: 2px solid rgba(204,136,0,0.4); padding-left: 12px; margin-top: 32px; text-align: left; }
+        [data-theme="dark"] .m6-global-note { color: rgba(255,170,0,0.7); border-left-color: rgba(255,170,0,0.4); }
+
+        /* --- Footer Pro --- */
+        .footer-pro {
+            border-top: 1px solid var(--border);
+            background: var(--footer-bg);
+            margin-top: 80px;
+            transition: background 0.4s ease, border-color 0.4s ease;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 56px 48px 40px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 48px;
+            text-align: left;
+        }
+        .footer-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--logo-foren);
+            letter-spacing: 4px;
+            text-shadow: 0 0 calc(20px * var(--text-shadow-amount, 1)) rgba(0,255,100,0.3);
+            margin-bottom: 10px;
+        }
+        [data-theme="light"] .footer-logo { text-shadow: none; }
+        .footer-logo span { color: var(--logo-sight); }
+        .footer-tagline {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .footer-version {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--green); opacity: 0.7;
+            letter-spacing: 1px;
+        }
+        .footer-col-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--green); opacity: 0.7;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .footer-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-links span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .footer-links span:hover { color: var(--green); }
+        .footer-integrity-items { display: flex; flex-direction: column; gap: 10px; }
+        .fi-item {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-faint);
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 48px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-bottom-left,
+        .footer-bottom-right {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--text-faint);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 900px) {
+            .m1-grid, .m3-grid, .m5-grid { grid-template-columns: 1fr; }
+            .m4-top, .m6-top { grid-template-columns: 1fr; }
+            .m6-smart { grid-template-columns: 1fr; }
+            header { padding: 0 24px; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .module.odd, .module.even { text-align: left; align-items: flex-start; }
+            .module.odd .mod-desc, .module.even .mod-desc { margin-left: 0; margin-right: auto; }
+        }
+    </style>
+    <style>
+    /* ── Live additions on top of original CSS ── */
+    .scan-status-bar{display:none;position:sticky;top:64px;z-index:99;background:var(--panel);border-bottom:1px solid var(--border2);padding:10px 48px;align-items:center;gap:14px;flex-wrap:wrap;}
+    .scan-status-bar.active{display:flex;}
+    .ssb-label{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text-faint);letter-spacing:2px;}
+    .ssb-step{font-family:'Orbitron',monospace;font-size:.65rem;color:var(--green);letter-spacing:1px;}
+    .ssb-track{flex:1;height:3px;background:var(--green-dim);border-radius:2px;min-width:80px;}
+    .ssb-fill{height:100%;background:var(--green);border-radius:2px;width:0%;transition:width .6s ease;}
+    .ssb-pct{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text-dim);}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:ldPulse 1s ease-in-out infinite;}
+    @keyframes ldPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.6);}}
+    .cases-panel{display:none;position:fixed;top:64px;right:0;width:310px;height:calc(100vh - 64px);background:var(--panel);border-left:1px solid var(--border2);z-index:200;overflow-y:auto;padding:18px 14px;}
+    .cases-panel.open{display:block;}
+    .cases-title{font-family:'Orbitron',monospace;font-size:.62rem;letter-spacing:3px;color:var(--green);margin-bottom:12px;}
+    .case-item{border:1px solid var(--border);background:var(--green-dim);padding:9px 11px;margin-bottom:6px;cursor:pointer;border-radius:3px;transition:border-color .2s;}
+    .case-item:hover{border-color:var(--border2);}
+    .case-target{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--green);margin-bottom:2px;word-break:break-all;}
+    .case-meta{font-size:.6rem;color:var(--text-faint);font-family:'Share Tech Mono',monospace;}
+    .hbtn{background:var(--green-dim);border:1px solid var(--green);color:var(--green);font-family:'Orbitron',monospace;font-size:.6rem;font-weight:700;letter-spacing:1px;padding:5px 12px;cursor:pointer;text-transform:uppercase;border-radius:4px;transition:all .2s;white-space:nowrap;}
+    .hbtn:hover{background:var(--green);color:var(--panel);}
+    .hbtn.amber{border-color:#ffaa00;color:#ffaa00;background:rgba(255,170,0,.06);}
+    .hbtn.amber:hover{background:#ffaa00;color:#000;}
+    .hbtn.red{border-color:#ff2d55;color:#ff2d55;background:rgba(255,45,85,.06);}
+    .hbtn.red:hover{background:#ff2d55;color:#fff;}
+    .fade-in{animation:mFade .45s ease;}
+    @keyframes mFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    /* OS */
+    .os-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .os-main{border:1px solid var(--border2);background:var(--green-dim);padding:22px 26px;}
+    .os-distro{font-family:'Orbitron',monospace;font-size:2rem;font-weight:700;color:var(--green);line-height:1;margin-bottom:7px;}
+    .os-tbadge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:2px;padding:2px 9px;border-radius:2px;margin-bottom:12px;}
+    .t-CRITICAL{background:rgba(255,45,85,.12);color:#ff2d55;border:1px solid rgba(255,45,85,.3);}
+    .t-HIGH{background:rgba(255,170,0,.1);color:#ffaa00;border:1px solid rgba(255,170,0,.3);}
+    .t-MEDIUM{background:rgba(0,221,255,.08);color:#00ddff;border:1px solid rgba(0,221,255,.2);}
+    .t-NONE,.t-LOW{background:var(--green-dim);color:var(--green);border:1px solid var(--border2);}
+    .os-fl{font-family:'Share Tech Mono',monospace;font-size:.56rem;letter-spacing:2px;color:var(--text-faint);text-transform:uppercase;margin-bottom:1px;}
+    .os-fv{font-family:'Share Tech Mono',monospace;font-size:.76rem;color:var(--white);word-break:break-all;margin-bottom:8px;}
+    .conf-bar{height:3px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden;}
+    .conf-fill{height:100%;background:var(--green);border-radius:2px;transition:width 1.2s ease;}
+    .ev-box{border:1px solid var(--border);background:var(--panel2);padding:14px;}
+    .ev-item{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text-dim);padding:4px 0;border-bottom:1px solid var(--border);line-height:1.5;}
+    .ev-item::before{content:'▸ ';color:var(--green);}
+    @media(max-width:700px){.os-grid{grid-template-columns:1fr;}}
+    /* Tools */
+    .tools-tabs{display:flex;gap:2px;margin-bottom:2px;}
+    .ttab{font-family:'Orbitron',monospace;font-size:.56rem;letter-spacing:1px;padding:5px 13px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-dim);transition:all .2s;}
+    .ttab.active{background:var(--green-dim);border-color:var(--border2);color:var(--green);}
+    .ttbl{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:.7rem;}
+    .ttbl th{text-align:left;padding:8px 11px;border-bottom:1px solid var(--border2);color:var(--text-faint);font-size:.56rem;letter-spacing:2px;text-transform:uppercase;background:var(--panel2);}
+    .ttbl td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:middle;}
+    .ttbl tr:hover td{background:var(--green-dim);}
+    .tn{font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:600;color:var(--white);}
+    .st-a{color:#ff2d55;border:1px solid rgba(255,45,85,.3);padding:2px 6px;border-radius:2px;background:rgba(255,45,85,.08);font-size:.56rem;letter-spacing:1px;}
+    .st-g{color:#ffaa00;border:1px solid rgba(255,170,0,.3);padding:2px 6px;border-radius:2px;background:rgba(255,170,0,.08);font-size:.56rem;letter-spacing:1px;}
+    .rk-CRITICAL{color:#ff2d55;font-weight:700;}.rk-HIGH{color:#ffaa00;}.rk-MEDIUM{color:#00ddff;}.rk-LOW{color:var(--green);}
+    /* Kill chain + MITRE */
+    .kill-chain{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:12px 16px;border:1px solid var(--border);background:var(--green-dim);margin-bottom:16px;}
+    .kcp{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.08em;padding:4px 10px;border-radius:2px;opacity:.2;text-transform:uppercase;}
+    .kcp.hit{opacity:1;font-weight:700;}
+    .kca{color:var(--border2);font-size:9px;}
+    .mitre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:9px;}
+    .mc{border:1px solid var(--border);background:var(--panel2);padding:13px;border-left:3px solid #00ddff;}
+    .mc-pl{font-family:'Share Tech Mono',monospace;font-size:.56rem;letter-spacing:2px;color:#00ddff;text-transform:uppercase;margin-bottom:4px;}
+    .mc-te{font-family:'Orbitron',monospace;font-size:.6rem;color:var(--green);margin-bottom:4px;}
+    .mc-cm{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text-dim);background:var(--panel);padding:5px 8px;border-left:2px solid var(--border2);word-break:break-all;line-height:1.5;}
+    .persona-row{border:1px solid var(--border);padding:16px 20px;background:var(--green-dim);display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap;}
+    .persona-name{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;color:var(--green);}
+    .persona-desc{font-size:.83rem;color:var(--text-dim);line-height:1.5;}
+    .persona-conf{margin-left:auto;text-align:right;white-space:nowrap;}
+    .persona-cval{font-family:'Orbitron',monospace;font-size:1.7rem;font-weight:700;color:var(--green);line-height:1;}
+    /* Paradox */
+    .paradox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:9px;}
+    .pcard{border:1px solid var(--border);background:var(--panel2);padding:13px;position:relative;overflow:hidden;}
+    .pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+    .pcard.critical::before{background:#ff2d55;}.pcard.high::before{background:#ffaa00;}.pcard.medium::before{background:#00ddff;}
+    .psev{font-family:'Orbitron',monospace;font-size:.56rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+    .pdot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:ldPulse 1.5s infinite;}
+    .psev.critical{color:#ff2d55;}.psev.high{color:#ffaa00;}.psev.medium{color:#00ddff;}
+    .ptype{font-family:'Rajdhani',sans-serif;font-size:.92rem;font-weight:600;color:var(--white);margin-bottom:4px;text-transform:capitalize;}
+    .pfile{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#00ddff;background:var(--panel);padding:3px 6px;margin-bottom:6px;word-break:break-all;display:block;}
+    .pdelta{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;margin-bottom:6px;}
+    .pcard.critical .pdelta{color:#ff2d55;}.pcard.high .pdelta{color:#ffaa00;}.pcard.medium .pdelta{color:#00ddff;}
+    .pcourt{font-family:'Share Tech Mono',monospace;font-size:.63rem;color:rgba(255,100,100,.7);line-height:1.5;border-top:1px solid var(--border);padding-top:7px;margin-top:7px;}
+    .no-paradox{border:1px solid var(--border2);background:var(--green-dim);padding:20px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--green);}
+    /* Evasion */
+    .ev-wrap{border:1px solid var(--border2);background:var(--green-dim);padding:24px 28px;}
+    .ev-top{display:flex;align-items:flex-end;gap:10px;margin-bottom:14px;}
+    .ev-big{font-family:'Orbitron',monospace;font-size:clamp(38px,5vw,68px);font-weight:900;line-height:1;}
+    .ev-den{font-family:'Share Tech Mono',monospace;font-size:.85rem;color:var(--text-faint);padding-bottom:9px;}
+    .ev-lbl{font-family:'Orbitron',monospace;font-size:.65rem;padding-bottom:10px;}
+    .ev-bar-track{height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:18px;}
+    .ev-bar-fill{height:100%;border-radius:4px;transition:width 1.6s ease;}
+    .ev-signals{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+    .sig-row{display:flex;align-items:center;gap:7px;font-family:'Share Tech Mono',monospace;font-size:.66rem;padding:6px 9px;border:1px solid var(--border);background:var(--panel2);}
+    .sig-lbl{flex:1;color:var(--text-dim);}
+    .sig-pts{font-family:'Orbitron',monospace;font-size:.62rem;min-width:34px;text-align:right;}
+    .sig-on{color:#ff2d55;}.sig-off{color:var(--text-faint);}
+    @media(max-width:700px){.ev-signals{grid-template-columns:1fr;}}
+    /* UEFI */
+    .uefi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .uefi-s{border:1px solid var(--border2);padding:18px;background:var(--green-dim);}
+    .uefi-sl{font-family:'Share Tech Mono',monospace;font-size:.56rem;letter-spacing:2px;color:var(--text-faint);text-transform:uppercase;margin-bottom:9px;}
+    .uefi-sv{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+    .uefi-sv.detected{color:#ff2d55;}.uefi-sv.clean{color:var(--green);}
+    .uefi-ents{border:1px solid var(--border);background:var(--panel2);padding:13px;}
+    .uefi-ent{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text-dim);padding:4px 0;border-bottom:1px solid var(--border);}
+    .uefi-ent::before{content:'▸ ';color:var(--green);}
+    .uefi-note{grid-column:1/-1;font-family:'Share Tech Mono',monospace;font-size:.68rem;color:rgba(255,170,0,.75);border-left:2px solid #ffaa00;padding-left:11px;line-height:1.6;}
+    @media(max-width:700px){.uefi-grid{grid-template-columns:1fr;}}
+    /* Narrative + Verdict */
+    .narr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+    .narr-card{border:1px solid var(--border);background:var(--panel2);padding:16px;}
+    .narr-title{font-family:'Orbitron',monospace;font-size:.56rem;letter-spacing:3px;color:var(--green);opacity:.8;margin-bottom:9px;text-transform:uppercase;}
+    .narr-text{font-size:.83rem;color:var(--text-dim);line-height:1.7;font-style:italic;}
+    @media(max-width:700px){.narr-grid{grid-template-columns:1fr;}}
+    .verdict-block{border:1px solid var(--border2);padding:26px 30px;text-align:center;margin-top:16px;position:relative;overflow:hidden;}
+    .verdict-risk{font-family:'Orbitron',monospace;font-size:clamp(20px,3vw,34px);font-weight:900;margin-bottom:9px;}
+    .verdict-detail{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--text-dim);line-height:1.6;max-width:560px;margin:0 auto 18px;}
+    .verdict-stats{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;}
+    .vst{text-align:center;}
+    .vst-v{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:700;color:var(--white);line-height:1;}
+    .vst-l{font-family:'Share Tech Mono',monospace;font-size:.56rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:2px;margin-top:3px;}
+    /* PDF button */
+    .pdf-btn{
+        display:none;margin:28px auto 0;width:fit-content;
+        font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;
+        letter-spacing:2px;text-transform:uppercase;padding:11px 28px;
+        border:1px solid #ff2d55;color:#ff2d55;background:rgba(255,45,85,.06);
+        cursor:pointer;border-radius:4px;transition:all .25s;
+    }
+    .pdf-btn:hover{background:#ff2d55;color:#fff;box-shadow:0 0 18px rgba(255,45,85,.4);}
+    .pdf-btn.show{display:block;}
+    /* Verdict section hidden until data */
+    #m-verdict{display:none;}
+    #m-verdict.show{display:block;}
+    </style>
+</head>
+<body data-theme="dark">
+<div class="bg-grid"></div>
+<div class="bg-scanlines"></div>
+<div class="content-layer">
+
+<!-- HEADER -->
+<header>
+    <div class="logo"><span class="logo-foren">FOREN</span><span class="logo-sight">SIGHT</span></div>
+    <div class="header-controls" style="display:flex;align-items:center;gap:10px;">
+        <div id="liveDot" style="display:none;align-items:center;gap:6px;">
+            <div class="live-dot"></div>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--green);letter-spacing:2px;">LIVE</span>
+        </div>
+        <div class="header-version">ForenSight v1.0.0</div>
+        <button class="hbtn amber" id="casesBtn">CASES</button>
+        <button class="theme-toggle" id="themeToggle">LIGHT MODE</button>
+    </div>
+</header>
+
+<!-- SCAN STATUS BAR -->
+<div class="scan-status-bar" id="statusBar">
+    <span class="ssb-label">SCANNING</span>
+    <span class="ssb-step" id="ssStep">Initializing...</span>
+    <div class="ssb-track"><div class="ssb-fill" id="ssFill"></div></div>
+    <span class="ssb-pct" id="ssPct">0%</span>
+</div>
+
+<!-- CASES PANEL -->
+<div class="cases-panel" id="casesPanel">
+    <div class="cases-title">◈ SAVED SCANS</div>
+    <div id="casesList"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="scan-line"></div>
+    <div class="hero-content">
+        <div class="hero-title-container h-anim-1"><h1>Forensic Intelligence<br>for Linux Systems</h1></div>
+        <p class="h-anim-2">The forensic gap is real. When a seized machine runs Kali,<br>Tails, or BlackArch — every existing tool returns nothing.<br>ForenSight was built to fill that gap.</p>
+        <div class="hero-tags h-anim-3">
+            <div class="hero-tag">[ 6 Intelligence Modules ]</div>
+            <div class="hero-tag">[ Firmware-Level Evidence ]</div>
+            <div class="hero-tag">[ Court-Ready Reports ]</div>
+        </div>
+        <div class="scroll-ind h-anim-4">
+            <span class="scroll-txt">SCROLL TO EXPLORE</span>
+            <div class="scroll-line"></div>
+        </div>
+    </div>
+</section>
+
+<div class="separator"><div class="sep-glow"></div></div>
+<div class="sep-text">◈ FORENSIC INTELLIGENCE PLATFORM</div>
+
+<!-- MODULE 1: OS -->
+<section class="module odd" id="m1">
+    <div class="mod-header-odd">
+        <span class="mod-label">◈ MODULE 01 — OS DETECTION</span>
+        <h2 class="mod-title">Instant OS Classification</h2>
+        <p class="mod-desc">Identifies Kali, Tails, BlackArch, Parrot, Whonix in seconds. The OS choice is itself evidence — someone using Tails made a deliberate operational security decision.</p>
+    </div>
+    <div class="mod-content" id="mc-1">
+        <div class="empty-state reveal"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Scan Data</div><div class="empty-desc">Run forensight to populate this module</div></div>
+    </div>
+</section>
+<div class="section-divider-animated"></div>
+
+<!-- MODULE 2: TOOLS -->
+<section class="module even" id="m2">
+    <div class="mod-header-even">
+        <span class="mod-label">MODULE 02 — OFFENSIVE TOOL SCANNER ◈</span>
+        <h2 class="mod-title">Three Layers of Detection</h2>
+        <p class="mod-desc">Most tools only find what's currently installed. ForenSight finds what was installed, used, and deleted — because apt logs cannot delete themselves.</p>
+    </div>
+    <div class="mod-content" id="mc-2">
+        <div class="empty-state reveal"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Scan Data</div><div class="empty-desc">Run forensight to populate this module</div></div>
+    </div>
+</section>
+<div class="section-divider-animated"></div>
+
+<!-- MODULE 3: LARE -->
+<section class="module odd" id="m3">
+    <div class="mod-header-odd">
+        <span class="mod-label">◈ MODULE 03 — LARE · LIVE ATTACK RECONSTRUCTION ENGINE</span>
+        <h2 class="mod-title">From Commands to Kill Chain</h2>
+        <p class="mod-desc">MITRE ATT&CK kill chain phases are the input. Attacker persona and full timeline reconstruction are the output. ForenSight maps every recovered command to a phase, classifies the threat actor, and rebuilds the entire attack sequence chronologically.</p>
+    </div>
+    <div class="mod-content" id="mc-3">
+        <div class="empty-state reveal"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Scan Data</div><div class="empty-desc">Run forensight to populate this module</div></div>
+    </div>
+</section>
+<div class="section-divider-animated"></div>
+
+<!-- MODULE 4: TEMPORAL PARADOX -->
+<section class="module even" id="m4">
+    <div class="mod-header-even">
+        <span class="mod-label">MODULE 04 — TEMPORAL PARADOX ENGINE ◈</span>
+        <h2 class="mod-title">Mathematically Impossible Timestamps</h2>
+        <p class="mod-desc">mtime can never exceed ctime on an unmanipulated file. This is a kernel-enforced rule. Any violation is physically impossible without tampering — and constitutes court-admissible proof of deliberate evidence destruction.</p>
+    </div>
+    <div class="mod-content" id="mc-4">
+        <div class="empty-state reveal"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Scan Data</div><div class="empty-desc">Run forensight to populate this module</div></div>
+    </div>
+</section>
+<div class="section-divider-animated"></div>
+
+<!-- MODULE 5: EVASION -->
+<section class="module odd" id="m5">
+    <div class="mod-header-odd">
+        <span class="mod-label">◈ MODULE 05 — EVASION INTENT SCORE</span>
+        <h2 class="mod-title">How Hard Did They Try to Hide</h2>
+        <p class="mod-desc">A 0–100 score of deliberate concealment intent. Not a threat score. A concealment score. Covering tracks raises the score — evidence destruction is itself evidence.</p>
+    </div>
+    <div class="mod-content" id="mc-5">
+        <div class="empty-state reveal"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Scan Data</div><div class="empty-desc">Run forensight to populate this module</div></div>
+    </div>
+</section>
+<div class="section-divider-animated"></div>
+
+<!-- MODULE 6: UEFI -->
+<section class="module even" id="m6">
+    <div class="mod-header-even">
+        <span class="mod-label">MODULE 06 — UEFI FIRMWARE FINGERPRINT ◈</span>
+        <h2 class="mod-title">Evidence Tails Cannot Erase</h2>
+        <p class="mod-desc">UEFI firmware stores boot signatures in non-volatile NVRAM — completely separate from the hard drive, completely outside the reach of any operating system. Tails wipes everything it can touch. It cannot touch firmware.</p>
+    </div>
+    <div class="mod-content" id="mc-6">
+        <div class="empty-state reveal"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Scan Data</div><div class="empty-desc">Run forensight to populate this module</div></div>
+    </div>
+</section>
+<div class="section-divider-animated"></div>
+
+<!-- VERDICT + NARRATIVE + PDF -->
+<section class="module odd" id="m-verdict">
+    <div class="mod-header-odd">
+        <span class="mod-label">◈ FINAL VERDICT &amp; INVESTIGATIVE NARRATIVE</span>
+        <h2 class="mod-title">ForenSight Assessment</h2>
+        <p class="mod-desc">Consolidated verdict and AI-generated dual narrative — technical analysis for forensic experts and plain-language summary for investigators and legal teams.</p>
+    </div>
+    <div class="mod-content" id="mc-verdict"></div>
+    <button class="pdf-btn" id="pdfBtn" onclick="downloadPDF()">◈ DOWNLOAD PDF REPORT</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-pro">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="footer-logo">FOREN<span>SIGHT</span></div>
+            <div class="footer-tagline">Forensic Intelligence Platform for Linux Systems</div>
+            <div class="footer-version">v1.0.0 — All processing is local. Zero external connections.</div>
+        </div>
+        <div class="footer-modules">
+            <div class="footer-col-title">Intelligence Modules</div>
+            <div class="footer-links">
+                <span>OS Detection</span><span>Offensive Tool Scanner</span>
+                <span>LARE Engine</span><span>Temporal Paradox Engine</span>
+                <span>Evasion Intent Scorer</span><span>UEFI Fingerprint</span>
+            </div>
+        </div>
+        <div class="footer-integrity">
+            <div class="footer-col-title">Forensic Integrity</div>
+            <div class="footer-integrity-items">
+                <div class="fi-item">◈ Non-destructive — read-only operations only</div>
+                <div class="fi-item">◈ Chain of custody preserved on all scans</div>
+                <div class="fi-item">◈ Evidence never leaves the local machine</div>
+                <div class="fi-item">◈ All findings are source-attributed</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-bottom-left">ForenSight Forensic Intelligence Platform · Track 3 — Privacy-Focused and Adversary-Favored OS Analysis</div>
+        <div class="footer-bottom-right">Built for digital forensic investigators · Evidence integrity guaranteed</div>
+    </div>
+</footer>
+</div>
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────
+const PHASE_COLORS={
+    "Recon":"#00ddff","Initial Access":"#aa44ff","Execution":"#ff8800",
+    "Persistence":"#ffaa00","Privilege Escalation":"#ff3344",
+    "Defense Evasion":"#cc1122","Credential Access":"#ffdd00",
+    "Exfiltration":"#ff44aa","Cover Tracks":"#ff3344"
+};
+const PHASE_ORDER=["Recon","Initial Access","Execution","Persistence",
+    "Privilege Escalation","Defense Evasion","Credential Access","Exfiltration","Cover Tracks"];
+const STEP_PCT={os_profile:16,tools_detected:33,log_analysis:50,temporal_paradoxes:66,uefi:83,lare:100};
+const STEP_LBL={
+    os_profile:"[1/6] OS Fingerprinting",tools_detected:"[2/6] Tool Detection",
+    log_analysis:"[3/6] Log Analysis",temporal_paradoxes:"[4/6] Temporal Paradox Engine",
+    uefi:"[5/6] UEFI Fingerprinting",lare:"[6/6] LARE Intelligence Engine"
+};
+const PDESC={
+    "Network Intrusion Operator":"Focused on network scanning, exploitation, and gaining remote shells.",
+    "Data Exfiltrator":"Prioritizes data theft via covert channels and file transfer tools.",
+    "Credential Harvester":"Targets authentication systems — password cracking and hash dumping.",
+    "Web Application Attacker":"Exploits web application vulnerabilities — SQLi, XSS, directory traversal.",
+    "Wireless Attacker":"Specializes in wireless network attacks — WPA cracking, deauthentication.",
+    "Insider Threat":"Evidence of deliberate cover-up behavior — anti-forensic focus.",
+    "Advanced Persistent Threat (APT)":"Long-term access maintenance — persistence mechanisms and covert C2."
+};
+
+let R={};  // full accumulated result
+
+const $=id=>document.getElementById(id);
+function scoreColor(s){return s>=80?"#ff2d55":s>=60?"#ff4400":s>=40?"#ffaa00":"#00ff65";}
+function countUp(el,target,dur=1500){
+    let t0=null;
+    const step=ts=>{if(!t0)t0=ts;const p=Math.min((ts-t0)/dur,1);el.textContent=Math.floor((1-Math.pow(1-p,3))*target);if(p<1)requestAnimationFrame(step);else el.textContent=target;};
+    requestAnimationFrame(step);
+}
+
+// ── Render: OS ─────────────────────────────────────────────────────────────
+function buildOS(d){
+    if(!d||!d.distro){$("mc-1").innerHTML='<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">No OS Data</div></div>';return;}
+    const conf=Math.round((d.confidence||0)*100),thr=d.threat_level||"NONE";
+    $("mc-1").innerHTML=`<div class="os-grid fade-in">
+        <div class="os-main">
+            <div class="os-distro">${d.distro}</div>
+            <span class="os-tbadge t-${thr}">${thr}</span>
+            <div class="os-fl">Version</div><div class="os-fv">${d.version||"—"}</div>
+            <div class="os-fl">Kernel</div><div class="os-fv">${(d.kernel||"—").substring(0,80)}</div>
+            <div class="os-fl">Offensive Packages</div><div class="os-fv">${d.offensive_packages_found||0} found</div>
+            <div class="os-fl">Confidence</div>
+            <div class="os-fv" style="font-family:'Orbitron',monospace;font-size:1.25rem;color:var(--green)" id="cv">0%</div>
+            <div class="conf-bar"><div class="conf-fill" id="cf" style="width:0%"></div></div>
+        </div>
+        <div class="ev-box">
+            <div class="os-fl" style="margin-bottom:9px">Evidence Trail</div>
+            ${(d.evidence||[]).map(e=>`<div class="ev-item">${e}</div>`).join("")||'<div class="ev-item" style="color:var(--text-faint)">No evidence collected</div>'}
+        </div>
+    </div>`;
+    setTimeout(()=>{const cf=$("cf"),cv=$("cv");if(cf)cf.style.width=conf+"%";if(cv)cv.textContent=conf+"%";},80);
+}
+
+// ── Render: Tools ───────────────────────────────────────────────────────────
+function buildTools(tools){
+    if(!tools||!tools.length){$("mc-2").innerHTML='<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">No Tools Detected</div></div>';return;}
+    const inst=tools.filter(t=>t.state==="installed"),rem=tools.filter(t=>t.state==="removed");
+    function tbl(arr){
+        if(!arr.length)return`<div style="padding:14px;color:var(--text-faint);font-family:monospace;font-size:.73rem">None found</div>`;
+        return`<table class="ttbl"><thead><tr><th>Tool</th><th>Category</th><th>Risk</th><th>State</th><th>Evidence</th></tr></thead><tbody>
+        ${arr.map(t=>`<tr><td><span class="tn">${t.name}</span></td><td style="color:var(--text-dim)">${(t.category||"").replace(/_/g," ")}</td><td><span class="rk-${t.risk||"MEDIUM"}">${t.risk||"—"}</span></td><td><span class="${t.state==="installed"?"st-a":"st-g"}">${t.state==="installed"?"ACTIVE":"GHOST"}</span></td><td style="font-size:.6rem;color:var(--text-faint);max-width:160px;word-break:break-all">${t.evidence||"—"}</td></tr>`).join("")}
+        </tbody></table>`;
+    }
+    $("mc-2").innerHTML=`<div class="fade-in">
+        <div class="tools-tabs">
+            <button class="ttab active" id="tb-i" onclick="swTab('i')">INSTALLED (${inst.length})</button>
+            <button class="ttab" id="tb-g" onclick="swTab('g')">GHOST TRACES (${rem.length})</button>
+        </div>
+        <div id="tab-i">${tbl(inst)}</div>
+        <div id="tab-g" style="display:none">${tbl(rem)}</div>
+    </div>`;
+}
+function swTab(t){
+    $("tab-i").style.display=t==="i"?"":"none";
+    $("tab-g").style.display=t==="g"?"":"none";
+    $("tb-i").className="ttab"+(t==="i"?" active":"");
+    $("tb-g").className="ttab"+(t==="g"?" active":"");
+}
+
+// ── Render: LARE ────────────────────────────────────────────────────────────
+function buildLARE(d){
+    if(!d){$("mc-3").innerHTML='<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">No LARE Data</div></div>';return;}
+    const chain=d.mitre_chain||[],persona=d.persona||"Unknown",conf=Math.round((d.persona_confidence||0)*100);
+    const hit=[...new Set(chain.map(x=>x.phase))];
+    const chainHtml=PHASE_ORDER.map((p,i)=>
+        `<span class="kcp${hit.includes(p)?" hit":""}" style="color:${PHASE_COLORS[p]||"#888"};background:${PHASE_COLORS[p]||"#888"}18">${p}</span>`+
+        (i<PHASE_ORDER.length-1?'<span class="kca">→</span>':""
+    )).join("");
+    const byP={};chain.forEach(c=>{if(!byP[c.phase])byP[c.phase]=[];byP[c.phase].push(c);});
+    const cards=Object.entries(byP).map(([ph,evs])=>evs.map(ev=>
+        `<div class="mc" style="border-left-color:${PHASE_COLORS[ph]||"#00ddff"}">
+            <div class="mc-pl" style="color:${PHASE_COLORS[ph]||"#00ddff"}">${ph}</div>
+            <div class="mc-te">${ev.technique} · ${ev.tactic||""}</div>
+            <div class="mc-cm">${ev.command||"—"}</div>
+        </div>`).join("")).join("");
+    $("mc-3").innerHTML=`<div class="fade-in">
+        <div class="kill-chain">${chainHtml}</div>
+        <div class="mitre-grid">${cards||'<div style="padding:14px;color:var(--text-faint);font-family:monospace;font-size:.75rem">No MITRE techniques mapped</div>'}</div>
+        <div class="persona-row">
+            <div><div class="persona-name">${persona}</div><div class="persona-desc" style="margin-top:4px">${PDESC[persona]||"Attacker archetype based on tool patterns."}</div></div>
+            <div class="persona-conf"><div class="persona-cval">${conf}%</div><div style="font-family:'Share Tech Mono',monospace;font-size:.56rem;color:var(--text-faint);letter-spacing:2px">CONFIDENCE</div></div>
+        </div>
+    </div>`;
+}
+
+// ── Render: Paradoxes ───────────────────────────────────────────────────────
+function buildParadoxes(data){
+    if(!data||!data.length){$("mc-4").innerHTML='<div class="no-paradox fade-in">◈ NO TIMESTAMP PARADOXES DETECTED<br><span style="font-size:.63rem;color:var(--text-faint);display:block;margin-top:4px">All filesystem timestamps are logically consistent</span></div>';return;}
+    $("mc-4").innerHTML=`<div class="paradox-grid fade-in">${data.map(p=>{
+        const s=p.severity||"high",delta=p.delta_seconds!==undefined?Math.abs(p.delta_seconds).toFixed(2)+"s":"—";
+        return`<div class="pcard ${s}">
+            <div class="psev ${s}"><div class="pdot"></div>${s.toUpperCase()}</div>
+            <div class="ptype">${(p.type||"").replace(/_/g," ")}</div>
+            ${p.file?`<span class="pfile">${p.file}</span>`:""}
+            ${p.delta_seconds!==undefined?`<div class="pdelta">${delta} delta</div>`:""}
+            ${p.court_note?`<div class="pcourt">${p.court_note}</div>`:""}
+        </div>`;
+    }).join("")}</div>`;
+}
+
+// ── Render: Evasion ─────────────────────────────────────────────────────────
+function buildEvasion(score,bd){
+    if(score===undefined){$("mc-5").innerHTML='<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">Awaiting Score</div></div>';return;}
+    const col=scoreColor(score),lbl=score>=80?"CRITICAL THREAT":score>=60?"HIGH THREAT":score>=40?"MEDIUM THREAT":score>=20?"LOW THREAT":"MINIMAL THREAT";
+    const SIGS={log_wipe:["Critical log files wiped",25],history_clear:["Bash history cleared/poisoned",20],timestamp_manipulation:["Filesystem timestamp paradoxes",20],anti_forensic_tools:["Anti-forensic tools present",15],anonymization_tools:["Anonymization tools present",9],uefi_boot_anomaly:["UEFI USB boot signature",8],offensive_os:["Offensive OS identified",8]};
+    bd=bd||{};
+    $("mc-5").innerHTML=`<div class="ev-wrap fade-in">
+        <div class="ev-top"><div class="ev-big" style="color:${col}" id="en">0</div><div class="ev-den">/100</div><div class="ev-lbl" style="color:${col}">${lbl}</div></div>
+        <div class="ev-bar-track"><div class="ev-bar-fill" id="eb" style="width:0%;background:${col}"></div></div>
+        <div class="ev-signals">
+            ${Object.entries(SIGS).map(([k,[l]])=>{const p=bd[k]||0;return`<div class="sig-row"><div class="sig-lbl ${p>0?"sig-on":""}">${l}</div><div class="sig-pts ${p>0?"sig-on":"sig-off"}">${p} pts</div></div>`;}).join("")}
+        </div>
+    </div>`;
+    setTimeout(()=>{const n=$("en"),b=$("eb");if(n)countUp(n,score,1500);if(b)b.style.width=score+"%";},80);
+}
+
+// ── Render: UEFI ────────────────────────────────────────────────────────────
+function buildUEFI(d){
+    if(!d){$("mc-6").innerHTML='<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">No UEFI Data</div></div>';return;}
+    const usb=d.usb_boot_signature,ents=d.boot_entries||[];
+    $("mc-6").innerHTML=`<div class="uefi-grid fade-in">
+        <div class="uefi-s">
+            <div class="uefi-sl">USB Boot Signature</div>
+            <div class="uefi-sv ${usb?"detected":"clean"}">${usb?"⚠ DETECTED":"✓ NOT FOUND"}</div>
+            <div style="margin-top:12px"><div class="uefi-sl">Last Boot Device</div><div style="font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--white);margin-top:2px">${d.last_boot_device||"Unknown"}</div></div>
+            <div style="margin-top:12px"><div class="uefi-sl">Evidence</div><div style="font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--text-dim);margin-top:2px;line-height:1.6">${d.firmware_evidence||"—"}</div></div>
+        </div>
+        <div class="uefi-ents">
+            <div class="uefi-sl" style="margin-bottom:9px">Boot Entries</div>
+            ${ents.length?ents.map(e=>`<div class="uefi-ent">${e}</div>`).join(""):'<div style="color:var(--text-faint);font-family:monospace;font-size:.7rem">No boot entries found</div>'}
+        </div>
+        ${usb?`<div class="uefi-note">UEFI boot signatures are stored in non-volatile NVRAM on the motherboard chip — physically separate from the hard drive. This signature survives a complete OS wipe and cannot be erased by any software, including Tails.</div>`:""}
+    </div>`;
+}
+
+// ── Render: Verdict + Narrative ─────────────────────────────────────────────
+function buildVerdict(d){
+    if(!d||!d.verdict)return;
+    const sec=$("m-verdict");sec.classList.add("show");
+    const score=d.evasion_score||0,verdict=d.verdict||"",col=scoreColor(score);
+    const tools=d.tools_detected||[],chain=d.mitre_chain||[],paras=d.temporal_paradoxes||[];
+    $("mc-verdict").innerHTML=`
+    <div class="verdict-block fade-in" style="border-color:${col}44;background:${col}06">
+        <div class="verdict-risk" style="color:${col}">${verdict.split("—")[0].trim()}</div>
+        <div class="verdict-detail">${verdict}</div>
+        <div class="verdict-stats">
+            <div class="vst"><div class="vst-v">${score}</div><div class="vst-l">Evasion Score</div></div>
+            <div class="vst"><div class="vst-v">${tools.filter(t=>t.state==="installed").length}</div><div class="vst-l">Active Tools</div></div>
+            <div class="vst"><div class="vst-v">${tools.filter(t=>t.state==="removed").length}</div><div class="vst-l">Ghost Traces</div></div>
+            <div class="vst"><div class="vst-v">${paras.length}</div><div class="vst-l">Paradoxes</div></div>
+            <div class="vst"><div class="vst-v">${chain.length}</div><div class="vst-l">MITRE Techniques</div></div>
+            <div class="vst"><div class="vst-v">${new Set(chain.map(x=>x.phase)).size}</div><div class="vst-l">ATT&CK Phases</div></div>
+        </div>
+    </div>
+    ${(d.narrative_technical||d.narrative_plain)?`
+    <div class="narr-grid fade-in">
+        <div class="narr-card"><div class="narr-title">◈ Technical Analysis — AI Narrative</div><div class="narr-text">${d.narrative_technical||"—"}</div></div>
+        <div class="narr-card"><div class="narr-title">◈ Plain Language Report — Investigator Summary</div><div class="narr-text">${d.narrative_plain||"—"}</div></div>
+    </div>`:""}`;
+    $("pdfBtn").classList.add("show");
+    setTimeout(()=>sec.scrollIntoView({behavior:"smooth",block:"start"}),300);
+}
+
+// ── SSE: live updates from server ───────────────────────────────────────────
+function connectSSE(){
+    const es=new EventSource("/api/events");
+    es.onmessage=e=>{
+        try{
+            const msg=JSON.parse(e.data);
+            if(msg.type==="scan_start"){
+                R={};
+                $("statusBar").classList.add("active");
+                $("liveDot").style.display="flex";
+                $("ssStep").textContent="Initializing...";
+                $("ssFill").style.width="0%";
+                $("ssPct").textContent="0%";
+                $("pdfBtn").classList.remove("show");
+                $("m-verdict").classList.remove("show");
+            }
+            else if(msg.type==="module"){
+                const mod=msg.data.module,pay=msg.data.payload;
+                R[mod]=pay;
+                // Update status bar
+                if(STEP_PCT[mod]){$("ssStep").textContent=STEP_LBL[mod];$("ssFill").style.width=STEP_PCT[mod]+"%";$("ssPct").textContent=STEP_PCT[mod]+"%";}
+                // Render module immediately
+                switch(mod){
+                    case"os_profile":buildOS(pay);break;
+                    case"tools_detected":buildTools(pay);break;
+                    case"temporal_paradoxes":buildParadoxes(pay);break;
+                    case"uefi":buildUEFI(pay);break;
+                    case"lare":
+                        buildLARE(pay);
+                        if(pay.mitre_chain)R.mitre_chain=pay.mitre_chain;
+                        if(pay.persona)R.persona=pay.persona;
+                        break;
+                }
+            }
+            else if(msg.type==="scan_complete"){
+                const d=msg.data;
+                R={...R,...d};
+                // Render everything from complete result
+                if(d.os_profile)buildOS(d.os_profile);
+                if(d.tools_detected)buildTools(d.tools_detected);
+                if(d.temporal_paradoxes)buildParadoxes(d.temporal_paradoxes);
+                if(d.uefi)buildUEFI(d.uefi);
+                if(d.lare)buildLARE(d.lare);
+                buildEvasion(d.evasion_score,d.evasion_breakdown);
+                buildVerdict(d);
+                $("statusBar").classList.remove("active");
+                $("liveDot").style.display="none";
+            }
+        }catch(err){console.warn("SSE parse error",err);}
+    };
+    es.onerror=()=>setTimeout(connectSSE,3000);
+}
+
+// ── PDF Download ─────────────────────────────────────────────────────────────
+function downloadPDF(){
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+    const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),M=15;
+    let y=M;
+    function np(){doc.addPage();y=M;}
+    function cy(h){if(y+h>H-M)np();}
+    function sec(title){cy(16);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.setTextColor(0,180,60);doc.text(title,M,y);y+=4;doc.setLineWidth(.25);doc.setDrawColor(0,200,70);doc.line(M,y,W-M,y);y+=5;}
+
+    // Cover header
+    doc.setFillColor(5,10,5);doc.rect(0,0,W,26,"F");
+    doc.setFont("helvetica","bold");doc.setFontSize(20);doc.setTextColor(0,220,80);doc.text("FORENSIGHT",M,16);
+    doc.setFontSize(8);doc.setTextColor(70,130,70);doc.text("Forensic Intelligence Report",M+58,16);
+    doc.setFontSize(7);doc.setTextColor(50,100,50);doc.text(new Date().toISOString().slice(0,19)+" UTC",W-M,16,{align:"right"});
+    y=32;
+
+    const meta=R.scan_meta||{};
+    doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(90,90,90);
+    doc.text(`Target: ${meta.target||"—"}   Mode: ${meta.mode||"—"}   Version: ${meta.version||"—"}`,M,y);y+=8;
+
+    // Verdict
+    const verdict=R.verdict||"",score=R.evasion_score||0;
+    const vc=score>=80?[210,40,60]:score>=60?[210,90,0]:score>=40?[190,140,0]:[0,170,60];
+    doc.setFont("helvetica","bold");doc.setFontSize(14);doc.setTextColor(...vc);
+    doc.text(verdict.split("—")[0].trim(),M,y);y+=5;
+    doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(100,100,100);
+    doc.splitTextToSize(verdict,W-M*2).forEach(l=>{cy(5);doc.text(l,M,y);y+=5;});y+=5;
+
+    // Summary
+    const os=R.os_profile||{},tools=R.tools_detected||[],paras=R.temporal_paradoxes||[],chain=R.mitre_chain||[];
+    sec("SCAN SUMMARY");
+    [["Evasion Score",score+"/100"],["OS Detected",os.distro||"—"],["Confidence",Math.round((os.confidence||0)*100)+"%"],
+     ["Threat Level",os.threat_level||"—"],["Attacker Persona",R.persona||"—"],
+     ["Active Tools",tools.filter(t=>t.state==="installed").length+""],
+     ["Ghost Traces",tools.filter(t=>t.state==="removed").length+""],
+     ["Paradoxes Found",paras.length+""],["MITRE Techniques",chain.length+""],
+     ["ATT&CK Phases",new Set(chain.map(x=>x.phase)).size+""]
+    ].forEach(([k,v])=>{cy(6);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(100,100,100);doc.text(k,M,y);doc.setFont("helvetica","bold");doc.setTextColor(20,20,20);doc.text(v,M+60,y);y+=6;});y+=4;
+
+    // OS Evidence
+    if(os.evidence&&os.evidence.length){
+        sec("OS EVIDENCE");
+        os.evidence.forEach(e=>{cy(5);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(60,60,60);doc.splitTextToSize("▸ "+e,W-M*2).forEach(l=>{cy(5);doc.text(l,M,y);y+=5;});});y+=4;
+    }
+
+    // Tools
+    if(tools.length){
+        sec("OFFENSIVE TOOLS DETECTED");
+        tools.slice(0,50).forEach(t=>{
+            cy(6);doc.setFont("helvetica","bold");doc.setFontSize(8);doc.setTextColor(20,20,20);doc.text(t.name,M,y);
+            doc.setFont("helvetica","normal");doc.setTextColor(100,100,100);doc.text(t.risk||"—",M+44,y);
+            doc.setTextColor(...(t.state==="installed"?[200,40,40]:[170,120,0]));doc.text(t.state==="installed"?"ACTIVE":"GHOST",M+64,y);
+            doc.setTextColor(120,120,120);doc.text((t.evidence||"").substring(0,65),M+82,y);y+=6;
+        });y+=4;
+    }
+
+    // Paradoxes
+    if(paras.length){
+        sec("TEMPORAL PARADOXES — COURT-ADMISSIBLE EVIDENCE");
+        paras.forEach(p=>{
+            cy(22);const sc2=p.severity==="critical"?[205,40,55]:[180,120,0];
+            doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(...sc2);
+            doc.text((p.severity||"").toUpperCase()+" — "+(p.type||"").replace(/_/g," "),M,y);y+=5;
+            doc.setFont("helvetica","normal");doc.setFontSize(8);
+            if(p.file){doc.setTextColor(0,150,200);doc.text("File: "+p.file,M+3,y);y+=5;}
+            if(p.court_note){doc.setTextColor(60,60,60);doc.splitTextToSize(p.court_note,W-M*2-3).forEach(l=>{cy(5);doc.text(l,M+3,y);y+=5;});}
+            y+=3;
+        });y+=4;
+    }
+
+    // MITRE
+    if(chain.length){
+        sec("MITRE ATT&CK KILL CHAIN");
+        chain.forEach(c=>{
+            cy(6);doc.setFont("helvetica","bold");doc.setFontSize(8);doc.setTextColor(0,140,200);doc.text(c.phase,M,y);
+            doc.text(c.technique||"",M+46,y);
+            doc.setFont("helvetica","normal");doc.setTextColor(80,80,80);doc.text((c.command||"").substring(0,70),M+68,y);y+=6;
+        });y+=4;
+    }
+
+    // ── AI Narrative Technical ──────────────────────────────────────────────
+    const tech=R.narrative_technical||"";
+    if(tech){
+        sec("TECHNICAL ANALYSIS REPORT (AI-Generated)");
+        doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(35,35,35);
+        doc.splitTextToSize(tech,W-M*2).forEach(l=>{cy(6);doc.text(l,M,y);y+=5.5;});y+=7;
+    }
+
+    // ── AI Narrative Plain English ──────────────────────────────────────────
+    const plain=R.narrative_plain||"";
+    if(plain){
+        sec("PLAIN LANGUAGE REPORT — Investigator Summary (AI-Generated)");
+        doc.setFont("helvetica","italic");doc.setFontSize(8.5);doc.setTextColor(45,45,45);
+        doc.splitTextToSize(plain,W-M*2).forEach(l=>{cy(6);doc.text(l,M,y);y+=5.5;});y+=7;
+    }
+
+    // Footer on every page
+    const tot=doc.internal.getNumberOfPages();
+    for(let i=1;i<=tot;i++){
+        doc.setPage(i);
+        doc.setFont("helvetica","normal");doc.setFontSize(7);doc.setTextColor(130,130,130);
+        doc.text("ForenSight Forensic Intelligence Report — Team Cyber Nuggets — CONFIDENTIAL",M,H-8);
+        doc.text(`Page ${i} of ${tot}`,W-M,H-8,{align:"right"});
+        doc.setDrawColor(0,180,60);doc.setLineWidth(.2);doc.line(M,H-10,W-M,H-10);
+    }
+
+    const ts=(R.scan_meta?.scan_time||"").replace(/[^0-9T]/g,"").slice(0,15)||Date.now();
+    doc.save(`ForenSight_Report_${ts}.pdf`);
+}
+
+// ── Cases ────────────────────────────────────────────────────────────────────
+$("casesBtn").addEventListener("click",async()=>{
+    const panel=$("casesPanel");panel.classList.toggle("open");
+    if(panel.classList.contains("open")){
+        const res=await fetch("/api/cases"),list=await res.json(),el=$("casesList");
+        if(!list.length){el.innerHTML='<div style="color:var(--text-faint);font-family:monospace;font-size:.7rem;padding:8px">No saved scans found</div>';return;}
+        el.innerHTML=list.map(c=>`<div class="case-item" onclick="loadCase('${c.file}')"><div class="case-target">${c.target}</div><div class="case-meta">${c.scan_time?.slice(0,19)||"—"}</div><div class="case-meta" style="color:#ffaa00">Score: ${c.score}/100</div></div>`).join("");
+    }
+});
+async function loadCase(file){
+    $("casesPanel").classList.remove("open");
+    const r=await fetch("/api/load",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({file})});
+    const d=await r.json();if(!d.ok)alert("Failed: "+d.error);
+}
+
+// ── Theme ────────────────────────────────────────────────────────────────────
+$("themeToggle").addEventListener("click",()=>{
+    const t=document.body.getAttribute("data-theme");
+    document.body.setAttribute("data-theme",t==="dark"?"light":"dark");
+    $("themeToggle").textContent=t==="dark"?"DARK MODE":"LIGHT MODE";
+});
+
+// ── Scroll reveal ────────────────────────────────────────────────────────────
+const obs=new IntersectionObserver((es,o)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");o.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll(".reveal,.reveal-left,.reveal-right,.mod-header-odd,.mod-header-even,.section-divider-animated").forEach(e=>obs.observe(e));
+
+// ── Boot: connect SSE + load any existing result ─────────────────────────────
+connectSSE();
+fetch("/api/result").then(r=>r.json()).then(d=>{
+    if(!d||!Object.keys(d).length)return;
+    R=d;
+    if(d.os_profile)buildOS(d.os_profile);
+    if(d.tools_detected)buildTools(d.tools_detected);
+    if(d.temporal_paradoxes)buildParadoxes(d.temporal_paradoxes);
+    if(d.uefi)buildUEFI(d.uefi);
+    if(d.lare)buildLARE(d.lare);
+    if(d.evasion_score!==undefined)buildEvasion(d.evasion_score,d.evasion_breakdown);
+    if(d.verdict)buildVerdict(d);
+}).catch(()=>{});
+</script>
+</body>
+</html>
